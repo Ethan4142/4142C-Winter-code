@@ -1,5 +1,6 @@
 #ifndef _FUNCTION_H
 #define _FUNCTION_H
+
 using namespace vex;
 
 void LeftDrive(int Speed);
@@ -61,7 +62,11 @@ double CurAcc();
 
 void setArm(int degree);
 
-int LftPos();
+double LftPos();
 
 void Turn(int mSpeed,int Angle, bool Direction);
+
+int DriveT();
+
+void DriveTask(int pos,int mspeed);
 #endif

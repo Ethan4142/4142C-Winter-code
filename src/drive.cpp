@@ -17,7 +17,11 @@ motor_group rgtMotors = {rgtFrnt,rgtTop,rgtBot};
  double DprevError = 0;
  double DintegralError = 0;
  double curError = 0 ;
-// straightining constant
+//DriveTask Constant
+ double dist = 0;
+ double mspd = 0;
+
+// straightinin constant
  double oKp = 0.6;
 //PID Turning Constants
  double TurnRor = 0 ;
@@ -101,13 +105,13 @@ double DrivePID(int mSpeed, int Inches){
 //Driving straightening
 
 double Align(){
-  return(oKp * (curHeading() - 0));
+  return(oKp * (curHeading() - TurnRor));
 }
 
 
 // Turning PID
 double TurnPID(int mSpeed,int Degrees){
-  TcurError = Degrees - (std::abs((curHeading())- TurnRor)); //current heading error
+  TcurError = Degrees - ((curHeading())- TurnRor); //current heading error
 
   double ToutputP = turnKp * TcurError; //calculates Turning P output
 
@@ -132,6 +136,9 @@ double TurnPID(int mSpeed,int Degrees){
   if(Toutput > mSpeed){ //speed limiter
     Toutput = mSpeed;
   }
+  else if(Toutput < -mSpeed){
+    Toutput = - mSpeed;
+  }
   
   return (Toutput);
  }
@@ -151,26 +158,84 @@ void Drive(int mspeed,int Distance){
    }
   }
 }
-void Turn(int mSpeed, int Angle,bool Direction){ 
+void Turn(int mSpeed, int Angle){ 
  while (1){
    printf("Rwr %f", TcurError );
-   if (!Direction){ //sets the robot to turn right for less wasted motion
+   if (true){ //sets the robot to turn right for less wasted motion
      LeftDrive(-TurnPID(mSpeed,Angle));
      RightDrive(TurnPID(mSpeed,Angle));
    }
-   else if (Direction){  // sets the robot to turn left for less wasted motion
-     LeftDrive(TurnPID(mSpeed,Angle));
-     RightDrive(-TurnPID(mSpeed,Angle));
-   }
    if (TcurError <= 0){
      TurnRor = Angle + TurnRor;
-     if (TurnRor >= 360){ //Limits the Turn to only the angles of a circle like 360
-       TurnRor = TurnRor - 360;
-     }
     //  printf("Rwr %f", TcurError );
      ResetTPID();
      stop_Drive();
      break;
    }
  }
+}
+//Driving Task-------------------------------------------------------------------
+
+int DriveT(){
+//PID Driving Constants
+ double dist = 0;
+ double mspd = 0;
+ double kp = 1.1;
+ double ki = 0.5;
+ double integralMaxDrive = 1375;
+ double integralMinDrive = 48;
+ double kd = 0.9;
+ double DprevError = 0;
+ double DintegralError = 0;
+//align const
+ double oKp = 0.6;
+//Turn Constant
+ double Degree = 0;
+ double TurnRor = 0 ;
+ double turnKp = 0.6;
+ double turnKi = 0.01;
+ double integralMaxTurn = 500;
+ double integralMinTurn = 5;
+ double turnKd = 0.5;
+ double TprevError = 0;
+ double TintegralError = 0;
+ double TcurError = 0;
+
+
+ while(true){
+ double inches = (dist/12.56) * 115;
+ double Derror = inches - getAvg();
+ 
+ double Poutput = Derror * kp;
+ DintegralError += Derror ;
+ if(DintegralError >= integralMaxDrive){ //limits integral numbers
+    DintegralError = integralMaxDrive;
+   }
+ else if(DintegralError <= integralMinDrive){
+   DintegralError = integralMinDrive;
+   }
+ double Ioutput = DintegralError * ki ;
+ double Doutput = (Derror - DprevError) * kd ;
+ 
+ double align = oKp * (curHeading() - 0);
+ double output = (Poutput + Ioutput + Doutput);
+
+ if (output> mspd){
+   output = mspd;
+ }
+ else if(output < - mspd){
+   output = - mspd;
+ }
+
+
+ LeftDrive(output - align);
+ RightDrive(output + align);
+ wait(25,msec);
+ return(0);
+ }
+}
+//Drive Function to activate task or smth
+void setPost(int Distance, int speed){
+  dist = Distance;
+  mspd = speed;
 }

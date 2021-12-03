@@ -36,6 +36,7 @@ using namespace vex;
 
 // A global instance of competition
 competition Competition;
+vex::task Odo;
 
 // define your global instances of motors and other devices here
 
@@ -57,7 +58,7 @@ void pre_auton(void) {
   Inertial.setRotation(0,degrees);
   Clamp();
   UnTilt();
-  
+  Odo = task(DriveT);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -73,49 +74,6 @@ void pre_auton(void) {
 void autonomous(void) {
  UnClamp();
  //wait(5,sec);
-
- //Inertial calibration testing without Competition switch
- //Program skills-------------------------------------------------------------
- /*Drive(80,68); //Drives to 1st goal
- wait(200,msec);
- Clamp();        //Clamps 1st goal 
- wait(200,msec);
- Turn(90,20);    //Turn towards plat
- wait(200,msec);
- Drive(90,42); //drives to blue plat 
- wait(200,msec);
- setArm(150);    //lifts arm to plat level
- wait(200,msec);
- Drive(80,10);
- wait(200,msec);
- Turn(80,340);
- wait(200,msec);
- setArm(120);
- wait(200,msec);
- UnClamp();      //lets go of the 1st goal on plat
- wait(200,msec);
- Drive(80,-15000); //backs away from plat
- wait(200,msec);
- setArm(60);
- Turn(90,120);   //turns around to the 2nd goal 
- wait(200,msec);
- Drive(90,24);
- wait(200,msec);
- Clamp();
- wait(200,msec);
- Drive(90,24);
- wait(200,msec);
- setArm(150);
- wait(200,msec);
- Drive(90,24);
- wait(200,msec);
- UnClamp();
- wait(200,msec);
- */
- wait(2000,msec);
- Turn(80,90,true);
- wait(2000,msec);
- Turn(80,270,false);
 
 }
 

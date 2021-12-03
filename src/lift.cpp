@@ -14,7 +14,7 @@ void lift_Stop(){
   Liftmotors.stop(hold);
 }
 //Returns position of arm
-int LftPos(){
+double LftPos(){
   return LftPot.angle(degrees);
 }
 // Sets arm position to specific degree
