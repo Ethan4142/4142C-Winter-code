@@ -2,7 +2,7 @@
 #include "cmath"
 using namespace vex;
 
-motor_group Liftmotors (Lift);
+motor_group Liftmotors (lftLift,rgtLift);
 
 //Function to put the lift up
 void lift(int speed){
@@ -15,7 +15,7 @@ void lift_Stop(){
 }
 //Returns position of arm
 double LftPos(){
-  return LftPot.angle(degrees);
+  return((lftLift.position(degrees) + rgtLift.position(degrees)) /2 );
 }
 // Sets arm position to specific degree
 void setArm (int Degrees){

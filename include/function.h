@@ -50,9 +50,9 @@ void Even_Spin();
 
 void Stop_Spin();
 
-void Tilt();
+void Lock();
 
-void UnTilt();
+void UnLock();
 
 void Clamp();
 
@@ -69,4 +69,15 @@ void Turn(int mSpeed,int Angle, bool Direction);
 int DriveT();
 
 void DriveTask(int pos,int mspeed);
+
+void Tilt (int speed);
+
+void autoSelector();
+
+void Auto();
+
+void setPost(int Distance,int speed);
+
+bool DriveOff();
+
 #endif

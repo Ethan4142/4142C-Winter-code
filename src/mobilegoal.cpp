@@ -1,20 +1,19 @@
 #include "vex.h"
 using namespace vex;
 
-void Tilt() {
-  TilterLft.set(true);
-  TilterRgt.set(true);
+void Lock() {
+  TiltLock.set(true);
 }
-void UnTilt(){
-  TilterLft.set(false);
-  TilterRgt.set(false);
+void UnLock(){
+  TiltLock.set(false);
 }
 
 void Clamp(){
-  MbgClawRgt.set(true);
-  MbgClawLft.set(true);
+  MbgClaw.set(true);
 }
 void UnClamp(){
-  MbgClawLft.set(false);
-  MbgClawRgt.set(false);
+  MbgClaw.set(false);
+}
+void Tilt (int speed){
+  Tilter.spin(fwd,speed,pct);
 }

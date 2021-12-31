@@ -1,33 +1,23 @@
-/*----------------------------------------------------------------------------*/
-/*                                                                            */
-/*    Module:       main.cpp                                                  */
-/*    Author:       VEX                                                       */
-/*    Created:      Thu Sep 26 2019                                           */
-/*    Description:  Competition Template                                      */
-/*                                                                            */
-/*----------------------------------------------------------------------------*/
-
 // ---- START VEXCODE CONFIGURED DEVICES ----
 // Robot Configuration:
 // [Name]               [Type]        [Port(s)]
 // Controller1          controller                    
-// lftTop               motor         12              
-// lftBot               motor         18              
-// rgtTop               motor         20              
-// rgtBot               motor         4               
-// conveyor             motor         21              
-// Lift                 motor         9               
-// Inertial             inertial      3               
-// rgtFrnt              motor         19              
-// lftFrnt              motor         14              
-// Rght                 encoder       E, F            
-// Left                 encoder       G, H            
-// Expander8            triport       8               
-// TilterLft            digital_out   A               
-// TilterRgt            digital_out   B               
-// MbgClawRgt           digital_out   C               
-// MbgClawLft           digital_out   D               
+// lftBack              motor         14              
+// rgtBack              motor         3               
+// conveyor             motor         10              
+// lftLift              motor         9               
+// Inertial             inertial      18              
+// rgtFrnt              motor         1               
+// lftFrnt              motor         12              
+// Rght                 encoder       A, B            
+// Left                 encoder       A, B            
+// Expander20           triport       20              
+// TiltLock             digital_out   G               
+// MbgClaw              digital_out   H               
 // LftPot               pot           D               
+// rgtLift              motor         6               
+// Tilter               motor         19              
+// LimitSwitchH         limit         H               
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "vex.h"
@@ -37,6 +27,7 @@ using namespace vex;
 // A global instance of competition
 competition Competition;
 vex::task Odo;
+vex::task AutoSel;
 
 // define your global instances of motors and other devices here
 
@@ -57,8 +48,13 @@ void pre_auton(void) {
   Inertial.calibrate();
   Inertial.setRotation(0,degrees);
   Clamp();
-  UnTilt();
+  UnLock();
   Odo = task(DriveT);
+
+
+
+
+
 }
 
 /*---------------------------------------------------------------------------*/
@@ -73,8 +69,10 @@ void pre_auton(void) {
 
 void autonomous(void) {
  UnClamp();
- //wait(5,sec);
-
+ //wait(5,sec)
+ printf("Dinky KONG");
+ Auto();
+ Odo.suspend();
 }
 
 /*---------------------------------------------------------------------------*/
@@ -88,7 +86,7 @@ void autonomous(void) {
 /*---------------------------------------------------------------------------*/
 
 void usercontrol(void) {
-
+  Odo.stop();
   //Drive Table integer set
   int powr[23];
   int powr1[23];
@@ -104,16 +102,16 @@ void usercontrol(void) {
   int index;
   int index1;
   
-  bool Tilter = false;
+  bool TiltLock = false;
   bool MbgClaw = false;
 
   while (1) {
     //Sensor Values Print on the brain
       printf("Position: %d", curHeading());
 
-    Brain.Screen.printAt(20,160,  "Average Encoder Distance %d" , getAvg() ); //Prints Average    
-    Brain.Screen.printAt(20,180,  "Inertial Rotation %f" , CurAcc() );
-    Brain.Screen.printAt(20,200, "Ur %d", LftPos() );
+    Brain.Screen.printAt(260,160,  "Distance %d" , getAvg() ); //Prints Average    
+    Brain.Screen.printAt(260,180,  "Rotation %f" , LftPos() );
+    Brain.Screen.printAt(260,200, "Ur %d", DriveOff() );
     yAxis = Controller1.Axis3.value();
     xAxis = Controller1.Axis1.value();
     //---------------------------------Drive Table---------------------------------------------
@@ -175,41 +173,50 @@ void usercontrol(void) {
 
     LeftDrive(leftSide);
     //Intake Controller
-    if(Controller1.ButtonL1.pressing()==1){
-      Intake(75);
+    if(Controller1.ButtonX.pressing()==1){
+      Intake(95);
     }
-    else if(Controller1.ButtonL2.pressing()==1){
-      Intake(-75);
+    else if(Controller1.ButtonB.pressing()==1){
+      Intake(-85);
     }
     else{
       stop_Intake();
     }
     //controller lift
     if(Controller1.ButtonR1.pressing()==1){
-      lift(90);
+      lift(100);
     }
     else if(Controller1.ButtonR2.pressing()==1){
-      lift(-90);
+      lift(-100);
     }
     else{
       lift_Stop();
     }
-
+    //tilter Mototr controller
+    if(Controller1.ButtonL1.pressing() == 1){
+      Tilt(90);
+    }
+    else if (Controller1.ButtonL2.pressing()==1){
+      Tilt(-90);
+    }
+    else{
+      Tilter.stop(hold);
+    }
     // Tilter Controller
-    if(Controller1.ButtonX.pressing() == 1 ){
-      if (!Tilter){
-        Tilter = true;
-        Tilt();
+    if(Controller1.ButtonA.pressing() == 1 ){
+      if (!TiltLock){
+        TiltLock = true;
+        Lock();
         wait(125,msec);
       }
-      else if(Tilter){
-        Tilter = false;
-        UnTilt();
+      else if(TiltLock){
+        TiltLock = false;
+        UnLock();
         wait(125,msec);
       }
     }
     // Mobile Goal Controller
-     if(Controller1.ButtonA.pressing() ==  1){
+     if(Controller1.ButtonY.pressing() ==  1){
        if(!MbgClaw){
          MbgClaw = true;
          Clamp();

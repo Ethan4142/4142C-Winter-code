@@ -4,23 +4,22 @@ extern brain Brain;
 
 // VEXcode devices
 extern controller Controller1;
-extern motor lftTop;
-extern motor lftBot;
-extern motor rgtTop;
-extern motor rgtBot;
+extern motor lftBack;
+extern motor rgtBack;
 extern motor conveyor;
-extern motor Lift;
+extern motor lftLift;
 extern inertial Inertial;
 extern motor rgtFrnt;
 extern motor lftFrnt;
 extern encoder Rght;
 extern encoder Left;
-extern triport Expander8;
-extern digital_out TilterLft;
-extern digital_out TilterRgt;
-extern digital_out MbgClawRgt;
-extern digital_out MbgClawLft;
+extern triport Expander20;
+extern digital_out TiltLock;
+extern digital_out MbgClaw;
 extern pot LftPot;
+extern motor rgtLift;
+extern motor Tilter;
+extern limit LimitSwitchH;
 
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.
