@@ -10,6 +10,9 @@ void RightDrive(int Speed);
 void stop_Drive();
 //Function stops the drive motors
 
+void waituntillDriveoff();
+//Function to wait till drive movement is off
+
 void Drive(int mSpeed,int Inches);
 //Function to Drive using PID
 
@@ -76,7 +79,7 @@ void autoSelector();
 
 void Auto();
 
-void setPost(int Distance,int speed);
+void setPost(int Distance,int speed, int Ang);
 
 bool DriveOff();
 

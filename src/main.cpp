@@ -27,7 +27,7 @@ using namespace vex;
 // A global instance of competition
 competition Competition;
 vex::task Odo;
-vex::task AutoSel;
+
 
 // define your global instances of motors and other devices here
 
@@ -46,10 +46,11 @@ void pre_auton(void) {
   vexcodeInit();
   reset_Drive();
   Inertial.calibrate();
-  Inertial.setRotation(0,degrees);
   Clamp();
   UnLock();
   Odo = task(DriveT);
+  autoSelector();
+
 
 
 
@@ -68,11 +69,12 @@ void pre_auton(void) {
 /*---------------------------------------------------------------------------*/
 
 void autonomous(void) {
- UnClamp();
+ //UnClamp();
  //wait(5,sec)
- printf("Dinky KONG");
+ //Controller1.rumble(rumbleShort);
  Auto();
- Odo.suspend();
+ //Controller1.rumble(rumbleLong);
+
 }
 
 /*---------------------------------------------------------------------------*/
@@ -111,7 +113,6 @@ void usercontrol(void) {
 
     Brain.Screen.printAt(260,160,  "Distance %d" , getAvg() ); //Prints Average    
     Brain.Screen.printAt(260,180,  "Rotation %f" , LftPos() );
-    Brain.Screen.printAt(260,200, "Ur %d", DriveOff() );
     yAxis = Controller1.Axis3.value();
     xAxis = Controller1.Axis1.value();
     //---------------------------------Drive Table---------------------------------------------
