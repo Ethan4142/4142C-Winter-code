@@ -16,10 +16,8 @@ extern encoder Left;
 extern triport Expander20;
 extern digital_out TiltLock;
 extern digital_out MbgClaw;
-extern pot LftPot;
 extern motor rgtLift;
 extern motor Tilter;
-extern limit LimitSwitchH;
 
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.

@@ -10,10 +10,10 @@ motor_group rgtMotors = {rgtFrnt, rgtBack};
 
 // PID Driving Constants
 double kp = 0.4;
-double ki = 0.5;
-double integralMaxDrive = 1375;
-double integralMinDrive = 48;
-double kd = 0.4;
+double ki = 0.002;
+double integralMaxDrive = 2233;
+double integralMinDrive = -2233;
+double kd = 0.25;
 double DprevError = 0;
 double DintegralError = 0;
 double curError = 0 ;
@@ -21,16 +21,17 @@ double curError = 0 ;
 double dist = 0;
 double mspd = 0;
 double Degree = 0;
-
+int DriveStat = 0;
+int TurnStat = 0;
 // straightinin constant
-double oKp = 0.6;
+double oKp = 1.8;
 // PID Turning Constants
 double TurnRor = 0;
-double turnKp = 0.6;
+double turnKp = 0.9;
 double turnKi = 0.01;
 double integralMaxTurn = 500;
 double integralMinTurn = 5;
-double turnKd = 0.5;
+double turnKd = 0.28;
 double TprevError = 0;
 double TintegralError = 0;
 double TcurError = 0;
@@ -53,7 +54,7 @@ void ResetDPID() {
   DintegralError = 0;
   DprevError = 0;
   dist = 0;
-  stop_Drive();
+  curError = 0;
 }
 void reset_Drive() {
   Left.setPosition(0, degrees); // resets integrated encoder positions
@@ -65,23 +66,23 @@ int getAvg() {
 int curHeading() { return Inertial.rotation(degrees); }
 double CurAcc() { return Inertial.acceleration(yaxis); }
 
-void waituntillDriveoff(){
-  while(1){
-    wait(20,msec);
-    if(dist == 0){
-      break;
-    }
+bool DriveOff(){
+  if ((DriveStat == 2 || DriveStat == 0) && (TurnStat == 2 || TurnStat == 0)){
+    return(true);
+  }
+  else{
+    return(false);
   }
 }
 // PID
 // controllers----------------------------------------------------------------------
 // Driving PID
 double DrivePID(int mSpeed, int Inches) {
-  int ticks = (Inches / 12.56) * 115; // chages inches into encoder ticks
+  int ticks = (Inches / 12.9525) * 280; // chages inches into encoder ticks
 
   curError = ticks - getAvg(); // calculates the current error
 
-  double outputP = kp * Inches; // calculates the proportional output
+  double outputP = kp * curError; // calculates the proportional output
 
   DintegralError += curError;               // calculates integral error
   if (DintegralError >= integralMaxDrive) { // limits integral numbers
@@ -102,6 +103,9 @@ double DrivePID(int mSpeed, int Inches) {
     Output = -mSpeed;
   }
 
+ if (fabs(curError) <= 10){
+   DriveStat = 2;
+ }
   return (Output);
 }
 // Driving straightening
@@ -123,8 +127,7 @@ double TurnPID(int mSpeed, int Angle) {
 
   double ToutputI = turnKi * TintegralError; // calculates turning I output
 
-  double ToutputD =
-      turnKd * (TcurError - TprevError); // calculates turning D output
+  double ToutputD = turnKd * (TcurError - TprevError); // calculates turning D output
 
   TprevError = TcurError; // sets Previous output at end
 
@@ -137,49 +140,25 @@ double TurnPID(int mSpeed, int Angle) {
     Toutput = -mSpeed;
   }
 
+  if(TcurError <= 1){
+    TurnStat = 2;
+  }
+
   return (Toutput);
 }
-// Movement
-// functions--------------------------------------------------------------------
-/*void Drive(int mspeed, int Distance) {
-  reset_Drive();
-  while (1) {
-    printf("position %f ", curError);
-    LeftDrive(DrivePID(mspeed, Distance) - Align()); // sets robot motors to drive forward desired position
-                                                      // and the align keeps it straight
-    RightDrive(DrivePID(mspeed, Distance) + Align()); // left negetive, right positive
 
-    if (fabs(curError) <= 10) {
-      stop_Drive();
-      ResetDPID();
-      break;
-    }
+// Drive Function to activate task or smth-------------------------------
+void setPos(int Distance, int speed,int Ang) {
+  if(abs(Distance) > 0){
+    DriveStat = 1;
+    dist = Distance;
+    mspd =speed;
   }
-}
-void Turn(int mSpeed, int Angle) {
-  while (1) {
-    printf("Rwr %f", TcurError);
-    if (true) { // sets the robot to turn right for less wasted motion
-      LeftDrive(-TurnPID(mSpeed, Angle));
-      RightDrive(TurnPID(mSpeed, Angle));
-    }
-    if (TcurError <= 0) {
-      
-      //  printf("Rwr %f", TcurError );
-      EndTPID();
-      stop_Drive();
-      break;
-    }
+  else if(abs(Ang) > 0){
+    TurnStat  = 1;
+    mspd = speed;
+    Degree = Ang;
   }
-}
-*/
-// Driving
-
-// Drive Function to activate task or smth
-void setPost(int Distance, int speed,int Ang) {
-  dist = Distance;
-  mspd = speed;
-  Degree = Ang;
 }
 
 // Task-------------------------------------------------------------------
@@ -187,13 +166,26 @@ void setPost(int Distance, int speed,int Ang) {
 int DriveT() {
 
   while(1){
-    LeftDrive( DrivePID(mspd,dist) /*- Align()*/);
-    RightDrive( DrivePID(mspd,dist) /*+ Align()*/);
-    printf("Error %d", getAvg());
-
-    if(fabs(curError) <= 10 || fabs(TcurError) <= 0 ){
+    if(DriveStat == 1){
+     LeftDrive( DrivePID(mspd,dist) - Align());
+     RightDrive( DrivePID(mspd,dist) + Align());
+     printf("Error %f", curError);
+    }
+    else if( DriveStat == 2){
      ResetDPID();
-     EndTPID();
+     DriveStat = 0;
+    }
+    if(TurnStat == 1){
+      LeftDrive(TurnPID(mspd,Degree));
+      RightDrive(-TurnPID(mspd,Degree));
+      printf("Error %f", TcurError);
+    }
+    else if(TurnStat == 2){
+      EndTPID();
+      TurnStat = 0;
+    }
+    if (DriveStat == 0 && TurnStat == 0 ){
+     stop_Drive();
     }
   } 
   wait(20, msec);

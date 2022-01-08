@@ -2,6 +2,16 @@
 
 int SelectedAuto = 0;
 
+void waitTillOff(){
+  while (1){
+    wait(30,msec);
+    if(DriveOff() && ArmOff() && IntakeOff() && TiltOff()){
+      break;
+    }
+    wait(20,msec);
+  }
+}
+
 void autoSelector() {
  
  int width = 80;
@@ -68,9 +78,15 @@ void Auto(){
   if(SelectedAuto == 1){
    
    //TOP Red Auto
-   setPost(20,90,0);
-   waituntillDriveoff();
-   Controller1.rumble(rumbleLong);
+   setPos(-48,90,0);
+   TiltSet(-990);
+   waitTillOff();
+   UnClamp();
+
+   setPos(-24,90,0);
+   TiltSet(-400);
+   
+
   
    
   }

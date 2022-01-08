@@ -27,6 +27,9 @@ using namespace vex;
 // A global instance of competition
 competition Competition;
 vex::task Odo;
+vex::task Arm;
+vex::task Con;
+vex::task Mbg;
 
 
 // define your global instances of motors and other devices here
@@ -47,8 +50,11 @@ void pre_auton(void) {
   reset_Drive();
   Inertial.calibrate();
   Clamp();
-  UnLock();
+  Lock();
   Odo = task(DriveT);
+  Arm = task(ArmT);
+  Con = task(IntakeT);
+  Mbg = task(TiltT);
   autoSelector();
 
 
@@ -69,12 +75,11 @@ void pre_auton(void) {
 /*---------------------------------------------------------------------------*/
 
 void autonomous(void) {
- //UnClamp();
+ 
  //wait(5,sec)
- //Controller1.rumble(rumbleShort);
  Auto();
- //Controller1.rumble(rumbleLong);
 
+ //Odo.suspend();
 }
 
 /*---------------------------------------------------------------------------*/
@@ -89,6 +94,9 @@ void autonomous(void) {
 
 void usercontrol(void) {
   Odo.stop();
+  Arm.stop();
+  Mbg.stop();
+  Con.stop();
   //Drive Table integer set
   int powr[23];
   int powr1[23];
@@ -111,7 +119,7 @@ void usercontrol(void) {
     //Sensor Values Print on the brain
       printf("Position: %d", curHeading());
 
-    Brain.Screen.printAt(260,160,  "Distance %d" , getAvg() ); //Prints Average    
+    Brain.Screen.printAt(260,160,  "Distance %d" , TiltAng() ); //Prints Average    
     Brain.Screen.printAt(260,180,  "Rotation %f" , LftPos() );
     yAxis = Controller1.Axis3.value();
     xAxis = Controller1.Axis1.value();
@@ -193,17 +201,17 @@ void usercontrol(void) {
     else{
       lift_Stop();
     }
-    //tilter Mototr controller
+    //Tilter Controller
     if(Controller1.ButtonL1.pressing() == 1){
-      Tilt(90);
+      Tilter.spin(fwd,80,pct);
     }
-    else if (Controller1.ButtonL2.pressing()==1){
-      Tilt(-90);
+    else if(Controller1.ButtonL2.pressing() == 1){
+      Tilter.spin(reverse,80,pct);
     }
     else{
       Tilter.stop(hold);
     }
-    // Tilter Controller
+    // TiltLock Controller
     if(Controller1.ButtonA.pressing() == 1 ){
       if (!TiltLock){
         TiltLock = true;

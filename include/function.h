@@ -45,14 +45,6 @@ void Even_mbG();
 
 void Stop_mbG();
 
-void Spin(int speed);
-
-void Spin180();
-
-void Even_Spin();
-
-void Stop_Spin();
-
 void Lock();
 
 void UnLock();
@@ -63,24 +55,36 @@ void UnClamp();
 
 double CurAcc();
 
-void setArm(int degree);
-
 double LftPos();
 
 void Turn(int mSpeed,int Angle, bool Direction);
 
 int DriveT();
 
-void DriveTask(int pos,int mspeed);
-
-void Tilt (int speed);
-
 void autoSelector();
 
 void Auto();
 
-void setPost(int Distance,int speed, int Ang);
+void setPos(int Distance,int speed, int Ang);
+
+void TiltSet(int Degree);
 
 bool DriveOff();
+
+bool ArmOff();
+
+bool IntakeOff();
+
+bool TiltOff();
+
+void waitTillOff();
+
+int ArmT();
+
+int IntakeT();
+
+int TiltT();
+
+int TiltAng();
 
 #endif

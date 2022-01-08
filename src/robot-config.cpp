@@ -21,10 +21,8 @@ encoder Rght = encoder(Expander20.A);
 encoder Left = encoder(Brain.ThreeWirePort.A);
 digital_out TiltLock = digital_out(Expander20.G);
 digital_out MbgClaw = digital_out(Expander20.H);
-pot LftPot = pot(Brain.ThreeWirePort.D);
 motor rgtLift = motor(PORT6, ratio18_1, false);
 motor Tilter = motor(PORT19, ratio18_1, false);
-limit LimitSwitchH = limit(Brain.ThreeWirePort.H);
 
 // VEXcode generated functions
 // define variable for remote controller enable/disable
