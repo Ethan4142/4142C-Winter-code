@@ -67,7 +67,7 @@ int curHeading() { return Inertial.rotation(degrees); }
 double CurAcc() { return Inertial.acceleration(yaxis); }
 
 bool DriveOff(){
-  if ((DriveStat == 2 || DriveStat == 0) && (TurnStat == 2 || TurnStat == 0)){
+  if ((DriveStat == 2 || DriveStat == 0) && (TurnStat == 2 || TurnStat == 0)){ //
     return(true);
   }
   else{
@@ -140,7 +140,7 @@ double TurnPID(int mSpeed, int Angle) {
     Toutput = -mSpeed;
   }
 
-  if(TcurError <= 1){
+  if(TcurError <= 1){ //sets the Task to done mode 
     TurnStat = 2;
   }
 
@@ -149,13 +149,13 @@ double TurnPID(int mSpeed, int Angle) {
 
 // Drive Function to activate task or smth-------------------------------
 void setPos(int Distance, int speed,int Ang) {
-  if(abs(Distance) > 0){
-    DriveStat = 1;
+  if(abs(Distance) > 0){ //if the Drive pos wanna be changed 
+    DriveStat = 1;  //makes the Drive Task activate
     dist = Distance;
     mspd =speed;
   }
-  else if(abs(Ang) > 0){
-    TurnStat  = 1;
+  else if(abs(Ang) > 0){ //if the angle wants to be changed
+    TurnStat  = 1; //Makes the Turn Taks activate
     mspd = speed;
     Degree = Ang;
   }

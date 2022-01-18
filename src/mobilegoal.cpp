@@ -24,10 +24,15 @@ int TiltAng(){
 int TiltEr(){
   return(Ang - TiltAng());
 }
-void TiltSet(int Degree){
-  Ang = Degree;
+void TiltUp(){
+  Ang = -400;
   TiltStat = 1;
 }
+void TiltDwn(){
+  Ang = -990;
+  TiltStat = 1;
+}
+
 int TiltT(){
  while(1){
    if(TiltStat == 1){
