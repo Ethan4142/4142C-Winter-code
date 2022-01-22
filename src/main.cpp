@@ -4,7 +4,7 @@
 // Controller1          controller                    
 // lftBack              motor         14              
 // rgtBack              motor         3               
-// conveyor             motor         10              
+// conveyor             motor         8               
 // lftLift              motor         9               
 // Inertial             inertial      18              
 // rgtFrnt              motor         1               
@@ -12,12 +12,10 @@
 // Rght                 encoder       A, B            
 // Left                 encoder       A, B            
 // Expander20           triport       20              
-// TiltLock             digital_out   G               
-// MbgClaw              digital_out   H               
-// LftPot               pot           D               
+// TiltLock             digital_out   H               
+// MbgClaw              digital_out   G               
 // rgtLift              motor         6               
 // Tilter               motor         19              
-// LimitSwitchH         limit         H               
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "vex.h"
@@ -49,8 +47,8 @@ void pre_auton(void) {
   vexcodeInit();
   reset_Drive();
   Inertial.calibrate();
-  Clamp();
-  Lock();
+  UnClamp();
+  UnLock();
   Odo = task(DriveT);
   Arm = task(ArmT);
   Con = task(IntakeT);
@@ -79,7 +77,10 @@ void autonomous(void) {
  //wait(5,sec)
  Auto();
 
- //Odo.suspend();
+ Odo.suspend();
+ Arm.suspend();
+ Mbg.suspend();
+ Con.suspend();
 }
 
 /*---------------------------------------------------------------------------*/
@@ -183,13 +184,13 @@ void usercontrol(void) {
     LeftDrive(leftSide);
     //Intake Controller
     if(Controller1.ButtonX.pressing()==1){
-      Intake(95);
+      conveyor.spin(fwd,95,pct);
     }
     else if(Controller1.ButtonB.pressing()==1){
-      Intake(-85);
+      conveyor.spin(fwd,-85,pct);
     }
     else{
-      stop_Intake();
+      conveyor.stop(coast);
     }
     //controller lift
     if(Controller1.ButtonR1.pressing()==1){
@@ -212,7 +213,7 @@ void usercontrol(void) {
       Tilter.stop(hold);
     }
     // TiltLock Controller
-    if(Controller1.ButtonA.pressing() == 1 ){
+    if(Controller1.ButtonY.pressing() == 1 ){
       if (!TiltLock){
         TiltLock = true;
         Lock();
@@ -225,7 +226,7 @@ void usercontrol(void) {
       }
     }
     // Mobile Goal Controller
-     if(Controller1.ButtonY.pressing() ==  1){
+     if(Controller1.ButtonA.pressing() ==  1){
        if(!MbgClaw){
          MbgClaw = true;
          Clamp();

@@ -4,7 +4,7 @@ int SelectedAuto = 0;
 
 void waitTillOff(){ // Function that checks my tasks to see if their done and waits fro them to be done
   while (1){
-    wait(30,msec);
+    wait(800,msec);
     if(DriveOff() && ArmOff() && IntakeOff() && TiltOff()){
       break;
     }
@@ -76,66 +76,162 @@ void autoSelector() {
 
 void Auto(){
   if(SelectedAuto == 1){
+   resetTiltAng();
    //set the robot up facing towards the neutral gaol parallel or touching the wall
    //Top Red Auto
    //Red Side With alliance Goal on Awp line __ puts 3 match loads in Robot __ 
-   setPos(-48,100,0); //Back towards the neutral goal
-   TiltDwn(); 
-   waitTillOff(); 
+   setPos(-50,90,0); //Back towards the neutral goal
+   TiltDwn();
+   UnLock(); 
+   wait(1.5,sec);
    Lock(); //picks up the neutral Goal
    TiltUp();
-   setPos(20,90,0); //forwards towards the Goal on the Awp line
+   setPos(24,90,0); //forwards towards the Goal on the Awp line
    waitTillOff();
-   setPos(0,0,-90); //Turn towards the Awp Goal
+   setPos(0,90,-90); //Turn towards the Awp Goal
+   wait(1,sec);
+   setPos(18,80,0); //forwards to the Awp goal
    waitTillOff();
-   setPos(20,80,0); //forwards to the Awp goal
-   wait(30,msec);
    Clamp();  //Picks up the Awp goal
    waitTillOff(); 
-   setPos(-8,90,0); //rev a little away from wall
+   setPos(-5,80,0); //rev a little away from wall
    waitTillOff();
-   setPos(0,90,-180); //Turn to be facint back towards the driving station 
+   setPos(0,90,-90); //Turn to be facint back towards the driving station 
    waitTillOff();
    //only if you wanna do match loads during auto
-   setPos(15,90,0); //forward for extra space
-   waitTillOff();
-   Intake(95); //Intake on
-   setPos(-20,40,0); //reverse Slowly to pick up match loads
+   setPos(2,90,0); //forward for extra space
+   wait(1.5,sec);
+   Intake(100); //Intake on
+   setPos(-30,40,0); //reverse Slowly to pick up match loads
    wait(2000,msec); // wait till done but Getto
    IntakeOff(); // intake off
+   setPos(5,90,0);
+   waitTillOff();
+   TiltDwn();
   }
    else if(SelectedAuto == 2){
+   resetTiltAng();
    // set up the robot near the corner of the field but a little crooked and aimed towards the neutral goal
    //Bottom Red Auto
    //Red side Auto with Alliance goal on the plat __ Puts 3 match loads in Robot __
-   setPos(-50,100,0); //reverse To the neutral Goal
+   setPos(-62,100,0); //reverse To the neutral Goal
    TiltDwn();
-   waitTillOff();
+   UnLock();
+   wait(1.9,sec);
    Lock();  //Lock and pick up the neutral goal
    TiltUp();
-   setPos(35,90,0); //goes back towards the plat
+   setPos(60,90,0); //goes back towards the plat
+   waitTillOff();
+   setPos(0,60,-85); //turns towards the aliance goal
+   waitTillOff();
+   setPos(10,90,0); //forwards to the plat Goal
+   waitTillOff();
+   Clamp(); //clamp on to the plat goal
+   wait(2,sec);
+   //only if you wanna do match loads during the Auto period
+   Intake(95); //intake on
+   setPos(-20,60,0); //reverse Slowly to account for the match load rings
+   wait(2000,msec); //getto wait till done
+   IntakeOff(); //intake off
+   
+  }
+  else if (SelectedAuto == 3){
+   resetTiltAng();
+
+    
+   setPos(-50,90,0); //Back towards the neutral goal
+   TiltDwn();
+   UnLock(); 
+   wait(1.5,sec);
+   Lock(); //picks up the neutral Goal
+   TiltUp();
+   setPos(24,90,0); //forwards towards the Goal on the Awp line
+   waitTillOff();
+   setPos(0,90,-90); //Turn towards the Awp Goal
+   wait(1,sec);
+   setPos(18,80,0); //forwards to the Awp goal
+   waitTillOff();
+   Clamp();  //Picks up the Awp goal
+   waitTillOff(); 
+   setPos(-5,80,0); //rev a little away from wall
+   waitTillOff();
+   setPos(0,90,-90); //Turn to be facint back towards the driving station 
+   waitTillOff();
+   //only if you wanna do match loads during auto
+   setPos(2,90,0); //forward for extra space
+   wait(1.5,sec);
+   Intake(100); //Intake on
+   setPos(-30,40,0); //reverse Slowly to pick up match loads
+   wait(2000,msec); // wait till done but Getto
+   IntakeOff(); // intake off
+   setPos(5,90,0);
+   waitTillOff();
+   TiltDwn();
+  }
+  else if(SelectedAuto == 4){
+   resetTiltAng();
+   // set up the robot near the corner of the field but a little crooked and aimed towards the neutral goal
+   //Bottom Blue Auto
+   //Blue side Auto with Alliance goal on the plat __ Puts 3 match loads in Robot __
+   setPos(-59,100,0); //reverse To the neutral Goal
+   TiltDwn();
+   UnLock();
+   wait(1.5,sec);
+   Lock();  //Lock and pick up the neutral goal
+   TiltUp();
+   setPos(42,90,0); //goes back towards the plat
    waitTillOff();
    setPos(0,90,-90); //turns towards the aliance goal
    waitTillOff();
    setPos(15,90,0); //forwards to the plat Goal
    waitTillOff();
    Clamp(); //clamp on to the plat goal
-   setPos(-20,90,0); //Reverse away from the plat 
-   waitTillOff();
+   wait(2,sec);
    //only if you wanna do match loads during the Auto period
-   setPos(0,90,-125); //Turn to be parallel to the wall
-   waitTillOff(); 
-   setPos(15,90,0); //lil forward to give space for match laods
-   waitTillOff();
    Intake(95); //intake on
-   setPos(-30,60,0); //reverse Slowly to account for the match load rings
+   setPos(-20,60,0); //reverse Slowly to account for the match load rings
    wait(2000,msec); //getto wait till done
    IntakeOff(); //intake off
+  
+  }
+  else if(SelectedAuto == 6){
+    //Skills Auto
+    resetTiltAng();
+    
+    setPos(5,80,0);
+    waitTillOff();
+    Clamp();
+    setPos(-5,80,0);
+    waitTillOff();
+    setPos(0,90,90);
+    waitTillOff();
+    setPos(-48,90,0);
+    TiltDwn();
+    wait(1.5,sec);
+    Lock();
+    TiltUp();
+    setPos(-48,90,0);
+    waitTillOff();
+    setPos(0,90,-120);
+    armPos(90);
+    waitTillOff();
+    armPos(80);
+    waitTillOff();
+    UnClamp();
+    waitTillOff();
+    setPos(-10,80,0);
+    TiltDwn();
+    waitTillOff();
+    UnLock();
+    setPos(5,90,0);
+    TiltUp();
+    waitTillOff();
+    setPos(0,90,180);
+    waitTillOff();
 
-   
 
 
-   
+
   }
 }
 

@@ -4,7 +4,6 @@
 using namespace vex;
 
 motor_group Liftmotors(lftLift, rgtLift);
-double ArmP = 5;
 int ArmStat = 0;
 double height = 0;
 
@@ -28,10 +27,10 @@ bool ArmOff(){
 }
 int setArm(int Degrees) {
   double ArmError = (Degrees - LftPos());
-  if (fabs(ArmError) <= 2 ){
+  if (fabs(ArmError) <= 8 ){
     ArmStat = 2;
   }
-  return(ArmError * ArmP);
+  return(90);
 }
 
 void armPos(int Angle){

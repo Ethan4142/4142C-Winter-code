@@ -24,7 +24,7 @@ double Degree = 0;
 int DriveStat = 0;
 int TurnStat = 0;
 // straightinin constant
-double oKp = 1.8;
+double oKp = 1.6;
 // PID Turning Constants
 double TurnRor = 0;
 double turnKp = 0.9;
@@ -55,6 +55,7 @@ void ResetDPID() {
   DprevError = 0;
   dist = 0;
   curError = 0;
+  reset_Drive();
 }
 void reset_Drive() {
   Left.setPosition(0, degrees); // resets integrated encoder positions
@@ -67,7 +68,7 @@ int curHeading() { return Inertial.rotation(degrees); }
 double CurAcc() { return Inertial.acceleration(yaxis); }
 
 bool DriveOff(){
-  if ((DriveStat == 2 || DriveStat == 0) && (TurnStat == 2 || TurnStat == 0)){ //
+  if ((DriveStat == 0) && (TurnStat == 0)){ //
     return(true);
   }
   else{
@@ -78,7 +79,7 @@ bool DriveOff(){
 // controllers----------------------------------------------------------------------
 // Driving PID
 double DrivePID(int mSpeed, int Inches) {
-  int ticks = (Inches / 12.9525) * 280; // chages inches into encoder ticks
+  int ticks = (Inches / 12.9525) * 230; // chages inches into encoder ticks
 
   curError = ticks - getAvg(); // calculates the current error
 
@@ -104,7 +105,7 @@ double DrivePID(int mSpeed, int Inches) {
   }
 
  if (fabs(curError) <= 10){
-   DriveStat = 2;
+   DriveStat = 0;
  }
   return (Output);
 }
@@ -140,8 +141,8 @@ double TurnPID(int mSpeed, int Angle) {
     Toutput = -mSpeed;
   }
 
-  if(TcurError <= 1){ //sets the Task to done mode 
-    TurnStat = 2;
+  if(fabs(TcurError) <= 1){ //sets the Task to done mode 
+    TurnStat = 0;
   }
 
   return (Toutput);
@@ -170,21 +171,17 @@ int DriveT() {
      LeftDrive( DrivePID(mspd,dist) - Align());
      RightDrive( DrivePID(mspd,dist) + Align());
      printf("Error %f", curError);
-    }
-    else if( DriveStat == 2){
-     ResetDPID();
-     DriveStat = 0;
+     TurnStat = 0;
     }
     if(TurnStat == 1){
       LeftDrive(TurnPID(mspd,Degree));
       RightDrive(-TurnPID(mspd,Degree));
       printf("Error %f", TcurError);
-    }
-    else if(TurnStat == 2){
-      EndTPID();
-      TurnStat = 0;
+      DriveStat = 0;
     }
     if (DriveStat == 0 && TurnStat == 0 ){
+      EndTPID();
+      ResetDPID();
      stop_Drive();
     }
   } 

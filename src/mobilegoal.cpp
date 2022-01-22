@@ -2,10 +2,10 @@
 using namespace vex;
 
 void Lock() {
-  TiltLock.set(true);
+  TiltLock.set(false);
 }
 void UnLock(){
-  TiltLock.set(false);
+  TiltLock.set(true);
 }
 
 void Clamp(){
@@ -15,9 +15,11 @@ void UnClamp(){
   MbgClaw.set(false);
 }
 //Tilter Controlls / Tasks ------------------------------------
-int Sped = 0;
 int Ang = 0;
 int TiltStat = 0;
+void resetTiltAng(){
+  Tilter.setPosition(0,degrees);
+}
 int TiltAng(){
   return(Tilter.position(degrees));
 }
@@ -26,7 +28,7 @@ int TiltEr(){
 }
 void TiltUp(){
   Ang = -400;
-  TiltStat = 1;
+  TiltStat = 2;
 }
 void TiltDwn(){
   Ang = -990;
@@ -36,12 +38,18 @@ void TiltDwn(){
 int TiltT(){
  while(1){
    if(TiltStat == 1){
-     Tilter.spin(fwd,(0.5 * TiltEr()),pct);
+     Tilter.spin(fwd,-100,pct);
+   }
+   else if(TiltStat == 2){
+     Tilter.spin(fwd,100,pct);
    }
    else if(TiltStat == 0){
      Tilter.stop(hold);
    }
-   if(abs(TiltEr()) <= 10){
+   if(TiltStat == 1 && TiltAng() <= Ang){
+     TiltStat = 0;
+   }
+   else if(TiltStat == 2 && TiltAng() >= Ang){
      TiltStat = 0;
    }
  }
