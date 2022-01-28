@@ -18,12 +18,10 @@
 // Tilter               motor         19              
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
-#include "vex.h"
+#include "auto.h"
 
 using namespace vex;
 
-// A global instance of competition
-competition Competition;
 vex::task Odo;
 vex::task Arm;
 vex::task Con;
@@ -46,6 +44,7 @@ void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
   vexcodeInit();
   reset_Drive();
+  ResetArm();
   Inertial.calibrate();
   UnClamp();
   UnLock();
@@ -54,7 +53,7 @@ void pre_auton(void) {
   Con = task(IntakeT);
   Mbg = task(TiltT);
   autoSelector();
-
+ 
 
 
 
@@ -74,7 +73,8 @@ void pre_auton(void) {
 
 void autonomous(void) {
  
- //wait(5,sec)
+//  wait(5,sec);
+ Inertial.setHeading(0,degrees);
  Auto();
 
  Odo.suspend();
@@ -114,14 +114,16 @@ void usercontrol(void) {
   int index1;
   
   bool TiltLock = false;
+  bool conv = false;
+  bool revConv = false;
   bool MbgClaw = false;
 
   while (1) {
     //Sensor Values Print on the brain
-      printf("Position: %d", curHeading());
+      printf("Position: %f", LftPos());
 
-    Brain.Screen.printAt(260,160,  "Distance %d" , TiltAng() ); //Prints Average    
-    Brain.Screen.printAt(260,180,  "Rotation %f" , LftPos() );
+    Brain.Screen.printAt(260,160,  "Distance %d" , LftPos() ); //Prints Average    
+    Brain.Screen.printAt(260,180,  "Rotation %f" , curHeading());
     yAxis = Controller1.Axis3.value();
     xAxis = Controller1.Axis1.value();
     //---------------------------------Drive Table---------------------------------------------
@@ -184,13 +186,25 @@ void usercontrol(void) {
     LeftDrive(leftSide);
     //Intake Controller
     if(Controller1.ButtonX.pressing()==1){
-      conveyor.spin(fwd,95,pct);
+      if(!conv){
+        conveyor.spin(fwd,97,pct);
+        conv = true;
+      }
+      else if(conv){
+        conveyor.stop(coast);
+        conv = false;
+      }
     }
     else if(Controller1.ButtonB.pressing()==1){
-      conveyor.spin(fwd,-85,pct);
-    }
-    else{
-      conveyor.stop(coast);
+       if(!revConv){
+        conveyor.spin(fwd,-90,pct);
+        revConv = true;
+       }
+       else if(revConv){
+         conveyor.stop(coast);
+         revConv = false;
+       }
+      
     }
     //controller lift
     if(Controller1.ButtonR1.pressing()==1){

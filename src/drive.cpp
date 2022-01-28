@@ -24,10 +24,10 @@ double Degree = 0;
 int DriveStat = 0;
 int TurnStat = 0;
 // straightinin constant
-double oKp = 1.6;
+double oKp = 1.4;
 // PID Turning Constants
 double TurnRor = 0;
-double turnKp = 0.9;
+double turnKp = 0.90;
 double turnKi = 0.01;
 double integralMaxTurn = 500;
 double integralMinTurn = 5;
@@ -64,7 +64,7 @@ void reset_Drive() {
 int getAvg() {
   return ((Rght.position(degrees) + Left.position(degrees)) / 2);
 }
-int curHeading() { return Inertial.rotation(degrees); }
+double curHeading() { return Inertial.rotation(degrees); }
 double CurAcc() { return Inertial.acceleration(yaxis); }
 
 bool DriveOff(){
@@ -141,7 +141,7 @@ double TurnPID(int mSpeed, int Angle) {
     Toutput = -mSpeed;
   }
 
-  if(fabs(TcurError) <= 1){ //sets the Task to done mode 
+  if(fabs(TcurError) <= 1.9){ //sets the Task to done mode 
     TurnStat = 0;
   }
 
@@ -170,7 +170,7 @@ int DriveT() {
     if(DriveStat == 1){
      LeftDrive( DrivePID(mspd,dist) - Align());
      RightDrive( DrivePID(mspd,dist) + Align());
-     printf("Error %f", curError);
+     printf("Error %f", curError );
      TurnStat = 0;
     }
     if(TurnStat == 1){

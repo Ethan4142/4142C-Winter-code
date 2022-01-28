@@ -31,7 +31,7 @@ void TiltUp(){
   TiltStat = 2;
 }
 void TiltDwn(){
-  Ang = -990;
+  Ang = -999;
   TiltStat = 1;
 }
 

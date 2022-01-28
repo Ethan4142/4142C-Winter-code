@@ -13,7 +13,7 @@ int DriveT(); // Drive Task
 void setPos(int Distance,int speed, int Ang); // Sets desired position of Drive and runs The task
 //Sensing
 int getAvg(); //Gets average of Drive encoder values
-int curHeading(); //Reports the inertial's current position
+double curHeading(); //Reports the inertial's current position
 bool DriveOff(); // reports if Drive is Done running or not running
 double CurAcc(); // reports the inertial sensors curent acceleration in newtons
 //-----------------------------------------------------------------------------------------------
@@ -26,6 +26,7 @@ void armPos(int Angle); // sets desired position for the arm and activates task
 void Clamp(); //Sets the Pnematic Clamp on the Lift to Clamp
 void UnClamp(); //Sets the Pnematic Ckamp on the Lift to Unclamp
 //Sensing
+void ResetArm(); // Resets internal encoders for the Arm motors used in pre auto
 double LftPos(); //gets the curent position of the lift
 bool ArmOff(); // checks to see if the Arm task is done moving
 //------------------------------------------------------------------------------------------------
