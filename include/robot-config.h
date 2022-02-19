@@ -23,6 +23,7 @@ extern motor lftTop;
 extern motor rgtTop;
 extern potV2 armPot;
 
+void driverControlled(void);
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.
  * 
