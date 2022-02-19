@@ -1,32 +1,33 @@
 // ---- START VEXCODE CONFIGURED DEVICES ----
 // Robot Configuration:
 // [Name]               [Type]        [Port(s)]
-// Controller1          controller                    
-// lftBack              motor         14              
-// rgtBack              motor         3               
-// conveyor             motor         8               
-// lftLift              motor         9               
-// Inertial             inertial      18              
-// rgtFrnt              motor         1               
-// lftFrnt              motor         12              
-// Rght                 encoder       A, B            
-// Left                 encoder       A, B            
-// Expander20           triport       20              
-// TiltLock             digital_out   H               
-// MbgClaw              digital_out   G               
-// rgtLift              motor         6               
-// Tilter               motor         19              
+// Controller1          controller
+// lftBack              motor         14
+// rgtBack              motor         3
+// conveyor             motor         8
+// lftLift              motor         9
+// Inertial             inertial      18
+// rgtFrnt              motor         1
+// lftFrnt              motor         12
+// Rght                 encoder       A, B
+// Left                 encoder       A, B
+// Expander20           triport       20
+// TiltLock             digital_out   H
+// MbgClaw              digital_out   G
+// rgtLift              motor         6
+// Tilter               motor         19
+// Midd                 encoder       E, F
+// lftTop               motor         5
+// rgtTop               motor         2
 // ---- END VEXCODE CONFIGURED DEVICES ----
-
-#include "auto.h"
+#include "vex.h"
 
 using namespace vex;
-
+competition Competition;
 vex::task Odo;
 vex::task Arm;
 vex::task Con;
 vex::task Mbg;
-
 
 // define your global instances of motors and other devices here
 
@@ -53,12 +54,6 @@ void pre_auton(void) {
   Con = task(IntakeT);
   Mbg = task(TiltT);
   autoSelector();
- 
-
-
-
-
-
 }
 
 /*---------------------------------------------------------------------------*/
@@ -72,15 +67,15 @@ void pre_auton(void) {
 /*---------------------------------------------------------------------------*/
 
 void autonomous(void) {
- 
-//  wait(5,sec);
- Inertial.setHeading(0,degrees);
- Auto();
 
- Odo.suspend();
- Arm.suspend();
- Mbg.suspend();
- Con.suspend();
+  //  wait(5,sec);
+  Inertial.setHeading(0, degrees);
+  Auto();
+
+  Odo.suspend();
+  Arm.suspend();
+  Mbg.suspend();
+  Con.suspend();
 }
 
 /*---------------------------------------------------------------------------*/
@@ -98,35 +93,31 @@ void usercontrol(void) {
   Arm.stop();
   Mbg.stop();
   Con.stop();
-  //Drive Table integer set
+  // Drive Table integer set
   int powr[23];
   int powr1[23];
   int yAxis;
   int xAxis;
   int rightSide;
   int leftSide;
-  // int rightFrnt;
-  // int rightBack;
-  // int leftFrnt;
-  // int leftBack;
 
   int index;
   int index1;
-  
+
   bool TiltLock = false;
   bool conv = false;
   bool revConv = false;
   bool MbgClaw = false;
 
   while (1) {
-    //Sensor Values Print on the brain
-      printf("Position: %f", LftPos());
+    // Sensor Values Print on the brain
 
-    Brain.Screen.printAt(260,160,  "Distance %d" , LftPos() ); //Prints Average    
-    Brain.Screen.printAt(260,180,  "Rotation %f" , curHeading());
+    Brain.Screen.printAt(260, 160, "Distance %d", TiltAng()); // Prints Average
+    Brain.Screen.printAt(260, 180, "Rotation %f", LiftPos());
     yAxis = Controller1.Axis3.value();
     xAxis = Controller1.Axis1.value();
-    //---------------------------------Drive Table---------------------------------------------
+    //---------------------------------Drive
+    // Table---------------------------------------------
     powr[0] = -100;
     powr[1] = -90;
     powr[2] = -80;
@@ -150,7 +141,7 @@ void usercontrol(void) {
     powr[20] = 80;
     powr[21] = 90;
     powr[22] = 100;
-  
+
     powr1[0] = -100;
     powr1[1] = -90;
     powr1[2] = -80;
@@ -174,90 +165,81 @@ void usercontrol(void) {
     powr1[20] = 80;
     powr1[21] = 90;
     powr1[22] = 100;
-    //---------------------------------------Drive Logic-----------------------------------
-    index = yAxis/12 + 11;
-    index1 = xAxis/12 + 11;
+    //---------------------------------------Drive
+    // Logic-----------------------------------
+    index = yAxis / 12 + 11;
+    index1 = xAxis / 12 + 11;
 
     rightSide = (powr[index] - powr1[index1]);
-    leftSide = (powr[index] + powr1[index1]); 
+    leftSide = (powr[index] + powr1[index1]);
 
     RightDrive(rightSide);
 
     LeftDrive(leftSide);
-    //Intake Controller
-    if(Controller1.ButtonX.pressing()==1){
-      if(!conv){
-        conveyor.spin(fwd,97,pct);
+    // Intake Controller
+    if (Controller1.ButtonX.pressing() == 1) {
+      if (!conv) {
+        conveyor.spin(fwd, 90, pct);
         conv = true;
-      }
-      else if(conv){
+        wait(200, msec);
+      } else if (conv) {
         conveyor.stop(coast);
         conv = false;
+        wait(200, msec);
+      }
+    } else if (Controller1.ButtonB.pressing() == 1) {
+      if (!revConv) {
+        conveyor.spin(fwd, -90, pct);
+        revConv = true;
+      } else if (revConv) {
+        conveyor.stop(coast);
+        revConv = false;
       }
     }
-    else if(Controller1.ButtonB.pressing()==1){
-       if(!revConv){
-        conveyor.spin(fwd,-90,pct);
-        revConv = true;
-       }
-       else if(revConv){
-         conveyor.stop(coast);
-         revConv = false;
-       }
-      
-    }
-    //controller lift
-    if(Controller1.ButtonR1.pressing()==1){
+    // controller lift
+    if (Controller1.ButtonR1.pressing() == 1) {
       lift(100);
-    }
-    else if(Controller1.ButtonR2.pressing()==1){
+    } else if (Controller1.ButtonR2.pressing() == 1) {
       lift(-100);
-    }
-    else{
+    } else {
       lift_Stop();
     }
-    //Tilter Controller
-    if(Controller1.ButtonL1.pressing() == 1){
-      Tilter.spin(fwd,80,pct);
-    }
-    else if(Controller1.ButtonL2.pressing() == 1){
-      Tilter.spin(reverse,80,pct);
-    }
-    else{
+    // Tilter Controller
+    if (Controller1.ButtonL1.pressing() == 1) {
+      Tilter.spin(fwd, 100, pct);
+    } else if (Controller1.ButtonL2.pressing() == 1) {
+      Tilter.spin(reverse, 80, pct);
+    } else {
       Tilter.stop(hold);
     }
     // TiltLock Controller
-    if(Controller1.ButtonY.pressing() == 1 ){
-      if (!TiltLock){
+    if (Controller1.ButtonY.pressing() == 1) {
+      if (!TiltLock) {
         TiltLock = true;
         Lock();
-        wait(125,msec);
-      }
-      else if(TiltLock){
+        wait(125, msec);
+      } else if (TiltLock) {
         TiltLock = false;
         UnLock();
-        wait(125,msec);
+        wait(125, msec);
       }
     }
     // Mobile Goal Controller
-     if(Controller1.ButtonA.pressing() ==  1){
-       if(!MbgClaw){
-         MbgClaw = true;
-         Clamp();
-         wait(125,msec);
-       }
-       else if(MbgClaw){
-         MbgClaw = false;
-         UnClamp();
-         wait(125,msec);
-       }
-     }
-  
+    if (Controller1.ButtonA.pressing() == 1) {
+      if (!MbgClaw) {
+        MbgClaw = true;
+        Clamp();
+        wait(125, msec);
+      } else if (MbgClaw) {
+        MbgClaw = false;
+        UnClamp();
+        wait(125, msec);
+      }
+    }
 
     wait(20, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
   }
-  
 }
 
 //

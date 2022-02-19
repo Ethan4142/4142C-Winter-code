@@ -17,6 +17,7 @@ void UnClamp(){
 //Tilter Controlls / Tasks ------------------------------------
 int Ang = 0;
 int TiltStat = 0;
+int tiltSpd = 0;
 void resetTiltAng(){
   Tilter.setPosition(0,degrees);
 }
@@ -26,22 +27,24 @@ int TiltAng(){
 int TiltEr(){
   return(Ang - TiltAng());
 }
-void TiltUp(){
+void TiltUp(int spd){
   Ang = -400;
   TiltStat = 2;
+  tiltSpd = spd;
 }
-void TiltDwn(){
-  Ang = -999;
+void TiltDwn(int spd){
+  Ang = -990;
   TiltStat = 1;
+  tiltSpd = spd;
 }
 
 int TiltT(){
  while(1){
    if(TiltStat == 1){
-     Tilter.spin(fwd,-100,pct);
+     Tilter.spin(fwd,-tiltSpd,pct);
    }
    else if(TiltStat == 2){
-     Tilter.spin(fwd,100,pct);
+     Tilter.spin(fwd,tiltSpd,pct);
    }
    else if(TiltStat == 0){
      Tilter.stop(hold);

@@ -3,9 +3,9 @@
 
 using namespace vex;
 
-motor_group lftMotors = {lftFrnt, lftBack};
+motor_group lftMotors = {lftFrnt, lftBack,lftTop};
 
-motor_group rgtMotors = {rgtFrnt, rgtBack};
+motor_group rgtMotors = {rgtFrnt, rgtBack,rgtTop};
 // Constants ------------------------------------------------------------
 
 // PID Driving Constants
@@ -141,7 +141,7 @@ double TurnPID(int mSpeed, int Angle) {
     Toutput = -mSpeed;
   }
 
-  if(fabs(TcurError) <= 1.9){ //sets the Task to done mode 
+  if(fabs(TcurError) <= 2){ //sets the Task to done mode 
     TurnStat = 0;
   }
 

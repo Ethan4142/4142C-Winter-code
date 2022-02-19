@@ -18,6 +18,10 @@ extern digital_out TiltLock;
 extern digital_out MbgClaw;
 extern motor rgtLift;
 extern motor Tilter;
+extern encoder Midd;
+extern motor lftTop;
+extern motor rgtTop;
+extern potV2 armPot;
 
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.

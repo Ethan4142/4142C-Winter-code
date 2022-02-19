@@ -12,8 +12,9 @@ void lift(int speed) { Liftmotors.spin(fwd, speed, pct); }
 // Function to stop the Lift
 void lift_Stop() { Liftmotors.stop(hold); }
 // Returns position of arm
-double LftPos() {
-  return ((lftLift.position(degrees) + rgtLift.position(degrees)) / 2);
+double LiftPos() {
+  // return ((lftLift.position(degrees) + rgtLift.position(degrees)) / 2);
+  return(armPot.angle(degrees));
 }
 void ResetArm(){
  lftLift.setPosition(0,degrees);
@@ -36,7 +37,7 @@ void armPos(int Angle){
 //Arm task 
 int ArmT(){
   while(1){
-    double ArmError = (height - LftPos());
+    double ArmError = (height - LiftPos());
     if (ArmStat == 1){
       printf("Arm height %f" , ArmError);
       if(ArmError > 9){

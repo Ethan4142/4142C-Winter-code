@@ -27,7 +27,7 @@ void Clamp(); //Sets the Pnematic Clamp on the Lift to Clamp
 void UnClamp(); //Sets the Pnematic Ckamp on the Lift to Unclamp
 //Sensing
 void ResetArm(); // Resets internal encoders for the Arm motors used in pre auto
-double LftPos(); //gets the curent position of the lift
+double LiftPos(); //gets the curent position of the lift
 bool ArmOff(); // checks to see if the Arm task is done moving
 //------------------------------------------------------------------------------------------------
 //----------------------------------Conveyor Functions--------------------------------------------
@@ -42,8 +42,8 @@ bool IntakeOff();// checks to see if thei ntake has stoped its movement
 //Back tilter Motion
 int TiltT(); //Tilter Task
 void resetTiltAng();
-void TiltUp(); //Tilter function to start task and set the Tilter into the Up pos
-void TiltDwn(); //Tilter Function to start task and set the tilter into the down pos
+void TiltUp(int spd); //Tilter function to start task and set the Tilter into the Up pos
+void TiltDwn(int spd); //Tilter Function to start task and set the tilter into the down pos
 void Lock(); //Sets the Pnumatic for the tilter to lock
 void UnLock(); // Sets the Pneumatic fro the tilter to unlock
 //Back Tilter Sensing
@@ -51,8 +51,6 @@ bool TiltOff(); //Checks to see if the tilter is done
 int TiltAng(); //Reports the Tilters curent Ang
 //--------------------------------------------------------------------------------------------------
 //--------------------------------------Total ROB Controlling Functions--------------------------
-void autoSelector(); //Runs the AutoSelector to select and set the pos of the robot
-void Auto(); // Runs the Auto according to what was selected on the Auto Selector
 
 void waitTillOff();// Robot Wait untill all of the Tasks are done 
 

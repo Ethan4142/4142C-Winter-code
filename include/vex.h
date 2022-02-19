@@ -17,7 +17,8 @@
 
 #include "robot-config.h"
 #include "function.h"
-
+#include "posTracking.h"
+#include "auto.h"
 
 #define waitUntil(condition)                                                   \
   do {                                                                         \
