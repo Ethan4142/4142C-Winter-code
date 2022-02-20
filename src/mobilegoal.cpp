@@ -1,16 +1,13 @@
 #include "vex.h"
 using namespace vex;
 
-void Lock() {
-  TiltLock.set(false);
-}
-void UnLock(){
-  TiltLock.set(true);
+
+void mbg(bool take){
+  mbgIntakeR.set(take);
+  mbgIntakeL.set(take);
+  lok.set(take);
 }
 
-void Clamp(){
-  MbgClaw.set(true);
-}
-void UnClamp(){
-  MbgClaw.set(false);
+void clamp (bool pos){
+  claw.set(pos);
 }

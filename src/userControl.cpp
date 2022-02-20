@@ -22,7 +22,8 @@ void driverControlled(void) {
 
   bool conv = false;
   bool revConv = false;
-
+  bool mbgPos = true;
+  bool clawPos = false;
   while (1) { // Controller Controlls while loop
     // Drive control table
     Brain.Screen.printAt(200,200, "CurHeading %f ", odometry.ang );
@@ -113,7 +114,26 @@ void driverControlled(void) {
       }
     }
     // Mbg Intakes Controller
-
+    if(Controller1.ButtonA.pressing()){
+      if(mbgPos){
+        mbg(true);
+        wait(200,msec);
+      }
+      else if(!mbgPos){
+        mbg(false);
+        wait(200,msec);
+      }
+    }
+    else if(Controller1.ButtonX.pressing()){
+      if(clawPos){
+        clamp(false);
+        wait(200,msec);
+      }
+      else if(!clawPos){
+        clamp(true);
+        wait(200,msec);
+      }
+    }
     //Arm Controller
     if (Controller1.ButtonR1.pressing()){
       lift.spin(fwd,90,pct);
@@ -124,7 +144,7 @@ void driverControlled(void) {
     else{
       lift.stop(hold);
     }
-
+    
   }
   wait(20, msec); // sleep to prevent wasted time ???
                   //

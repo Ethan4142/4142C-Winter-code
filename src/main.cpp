@@ -25,8 +25,6 @@ void pre_auton(void) {
   vexcodeInit();
   reset_Drive();
   Inertial.calibrate();
-  UnClamp();
-  UnLock();
   Odo = task(DriveT);
   Arm = task(ArmT);
   Con = task(IntakeT);

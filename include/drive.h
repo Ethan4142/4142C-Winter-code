@@ -1,6 +1,3 @@
-#ifndef _FUNCTION_H
-#define _FUNCTION_H
-
 using namespace vex;
 //------------------------------------------------------------------------------------------------
 //----------------------------------Drive functions-----------------------------------------------
@@ -23,8 +20,6 @@ void armUp(int speed); //Function to set the lift motors to certain speed
 void lift_Stop(); //Function to Stop the lift and set to hold motors 
 int ArmT(); // Arm task
 void armPos(int Angle); // sets desired position for the arm and activates task
-void Clamp(); //Sets the Pnematic Clamp on the Lift to Clamp
-void UnClamp(); //Sets the Pnematic Ckamp on the Lift to Unclamp
 //Sensing
 void ResetArm(); // Resets internal encoders for the Arm motors used in pre auto
 double LiftPos(); //gets the curent position of the lift
@@ -38,15 +33,8 @@ int IntakeT(); // Task to control the converyor
 //sensing
 bool IntakeOff();// checks to see if thei ntake has stoped its movement
 //-----------------------------------------------------------------------------------------------
-//---------------------------------Mbg and friends Functions-------------------------------------
-//Back tilter Motion
-void Lock(); //Sets the Pnumatic for the tilter to lock
-void UnLock(); // Sets the Pneumatic fro the tilter to unlock
-//Back Tilter Sensing
-//--------------------------------------------------------------------------------------------------
+
 //--------------------------------------Total ROB Controlling Functions--------------------------
 
 void waitTillOff();// Robot Wait untill all of the Tasks are done 
 
-
-#endif

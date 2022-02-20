@@ -2,7 +2,7 @@
 #include"cmath"
 void posTracking::updatePos(){
  posTracking::x = ((Right + Left) /2);
- posTracking::y = Midd;
+
  posTracking::ang = Inertial.heading();
 }
 
