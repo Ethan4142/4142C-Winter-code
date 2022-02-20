@@ -2,7 +2,6 @@
 #include "vex.h"
 
 using namespace vex;
-
 motor_group lftMotors = {lftFrnt, lftBack,lftTop};
 
 motor_group rgtMotors = {rgtFrnt, rgtBack,rgtTop};
@@ -59,10 +58,10 @@ void ResetDPID() {
 }
 void reset_Drive() {
   Left.setPosition(0, degrees); // resets integrated encoder positions
-  Rght.setPosition(0, degrees);
+  Right.setPosition(0, degrees);
 }
 int getAvg() {
-  return ((Rght.position(degrees) + Left.position(degrees)) / 2);
+  return ((Right.position(degrees) + Left.position(degrees)) / 2);
 }
 double curHeading() { return Inertial.rotation(degrees); }
 double CurAcc() { return Inertial.acceleration(yaxis); }

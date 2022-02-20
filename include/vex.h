@@ -20,6 +20,8 @@
 #include "posTracking.h"
 #include "auto.h"
 
+extern posTracking odometry;
+
 #define waitUntil(condition)                                                   \
   do {                                                                         \
     wait(5, msec);                                                             \

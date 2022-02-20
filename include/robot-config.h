@@ -7,21 +7,23 @@ extern controller Controller1;
 extern motor lftBack;
 extern motor rgtBack;
 extern motor conveyor;
-extern motor lftLift;
+extern motor lift;
 extern inertial Inertial;
 extern motor rgtFrnt;
 extern motor lftFrnt;
-extern encoder Rght;
+extern encoder Right;
 extern encoder Left;
-extern triport Expander20;
-extern digital_out TiltLock;
-extern digital_out MbgClaw;
-extern motor rgtLift;
+extern triport Expander21;
 extern motor Tilter;
 extern encoder Midd;
 extern motor lftTop;
 extern motor rgtTop;
 extern potV2 armPot;
+extern digital_out mbgIntakeR;
+extern digital_out mbgIntakeL;
+extern digital_out claw;
+extern digital_out lok;
+
 
 void driverControlled(void);
 /**

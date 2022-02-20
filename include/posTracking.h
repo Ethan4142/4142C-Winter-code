@@ -1,30 +1,31 @@
 using namespace vex;
 using namespace std;
 
-class posTracking{
- private:
- 
- const double dP = 0;
- const double dI = 0;
- const double dD = 0;
+class posTracking {
+private:
+  const double dP = 0;
+  const double dI = 0;
+  const double dD = 0;
 
- const int width = 0;
- const int length = 0;
+  const int width = 0;
+  const int length = 0;
 
- 
+public: 
+  float sX;
+  float sY;
+  float sAng;
+  
+  float x;
+  float y;
+  float ang;
 
+  void updatePos();
 
- public:
+  float getX();
 
- float x;
- float y;
+  float getY();
 
- void updatePos();
- 
- float getX();
+  float getAng(bool radian); // returns last updates angle in radians!!!
 
- float getY();
-
- float getPID();
- 
+  float PID(float target);
 };

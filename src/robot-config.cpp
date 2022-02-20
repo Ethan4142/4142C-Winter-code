@@ -8,26 +8,24 @@ using code = vision::code;
 brain  Brain;
 
 // VEXcode device constructors
-triport Expander20 = triport(PORT20);
+triport Expander21 = triport(PORT21);
 controller Controller1 = controller(primary);
-motor lftBack = motor(PORT12, ratio18_1, true);
-motor rgtBack = motor(PORT20, ratio18_1, false);
-motor conveyor = motor(PORT8, ratio18_1, true);
-motor lftLift = motor(PORT16, ratio18_1, true);
-inertial Inertial = inertial(PORT18);
-motor rgtFrnt = motor(PORT10, ratio18_1, false);
-motor lftFrnt = motor(PORT1, ratio18_1, true);
-encoder Rght = encoder(Expander20.A);
-encoder Left = encoder(Brain.ThreeWirePort.A);
-digital_out TiltLock = digital_out(Expander20.H);
-digital_out MbgClaw = digital_out(Expander20.G);
-motor rgtLift = motor(PORT6, ratio18_1, false);
-motor Tilter = motor(PORT19, ratio18_1, false);
-encoder Midd = encoder(Brain.ThreeWirePort.E);
-motor lftTop = motor(PORT3, ratio18_1, true);
-motor rgtTop = motor(PORT9, ratio18_1, false);
-potV2 armPot = potV2(Brain.ThreeWirePort.H);
-
+motor lftBack = motor(PORT9, ratio18_1, true);
+motor rgtBack = motor(PORT8, ratio18_1, false);
+motor conveyor = motor(PORT1, ratio6_1, false);
+motor lift = motor(PORT3, ratio36_1, false);
+inertial Inertial = inertial(PORT20);
+motor rgtFrnt = motor(PORT14, ratio18_1, false);
+motor lftFrnt = motor(PORT19, ratio18_1, true);
+encoder Right = encoder(Expander21.A);
+encoder Left = encoder(Expander21.C);
+motor lftTop = motor(PORT18, ratio18_1, true);
+motor rgtTop = motor(PORT12, ratio18_1, false);
+potV2 armPot = potV2(Expander21.H);
+digital_out mbgIntakeR = digital_out(Brain.ThreeWirePort.H);
+digital_out mbgIntakeL = digital_out(Brain.ThreeWirePort.G);
+digital_out claw = digital_out(Brain.ThreeWirePort.F);
+digital_out lok = digital_out(Brain.ThreeWirePort.E);
 // VEXcode generated functions
 // define variable for remote controller enable/disable
 bool RemoteControlCodeEnabled = true;

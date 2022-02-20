@@ -3,22 +3,18 @@
 
 using namespace vex;
 
-motor_group Liftmotors(lftLift, rgtLift);
+
 int ArmStat = 0;
 double height = 0;
 // Function to put the lift up
-void lift(int speed) { Liftmotors.spin(fwd, speed, pct); }
+void armUp(int speed) { lift.spin(fwd, speed, pct); }
 
 // Function to stop the Lift
-void lift_Stop() { Liftmotors.stop(hold); }
+void lift_Stop() { lift.stop(hold); }
 // Returns position of arm
 double LiftPos() {
   // return ((lftLift.position(degrees) + rgtLift.position(degrees)) / 2);
   return(armPot.angle(degrees));
-}
-void ResetArm(){
- lftLift.setPosition(0,degrees);
- rgtLift.setPosition(0,degrees);
 }
 // Sets arm position to specific degree
 bool ArmOff(){
@@ -41,11 +37,10 @@ int ArmT(){
     if (ArmStat == 1){
       printf("Arm height %f" , ArmError);
       if(ArmError > 9){
-        lftLift.spin(fwd,90,pct);
-        rgtLift.spin(fwd,90,pct);
+        lift.spin(fwd,90,pct);
       }
       else if(ArmError < -9){
-        lift(-90);
+        armUp(-90);
       }
       else if (fabs(ArmError) <= 8){
         ArmStat = 0;

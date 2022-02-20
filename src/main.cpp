@@ -1,36 +1,15 @@
-// ---- START VEXCODE CONFIGURED DEVICES ----
-// Robot Configuration:
-// [Name]               [Type]        [Port(s)]
-// Controller1          controller
-// lftBack              motor         14
-// rgtBack              motor         3
-// conveyor             motor         8
-// lftLift              motor         9
-// Inertial             inertial      18
-// rgtFrnt              motor         1
-// lftFrnt              motor         12
-// Rght                 encoder       A, B
-// Left                 encoder       A, B
-// Expander20           triport       20
-// TiltLock             digital_out   H
-// MbgClaw              digital_out   G
-// rgtLift              motor         6
-// Tilter               motor         19
-// Midd                 encoder       E, F
-// lftTop               motor         5
-// rgtTop               motor         2
-// ---- END VEXCODE CONFIGURED DEVICES ----
 #include "vex.h"
 
 using namespace vex;
 competition Competition;
+
+//init Tasks-----------
 vex::task Odo;
 vex::task Arm;
 vex::task Con;
-vex::task Mbg;
-
+//----------------------
 // define your global instances of motors and other devices here
-
+posTracking odometry;
 /*---------------------------------------------------------------------------*/
 /*                          Pre-Autonomous Functions                         */
 /*                                                                           */
@@ -45,14 +24,12 @@ void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
   vexcodeInit();
   reset_Drive();
-  ResetArm();
   Inertial.calibrate();
   UnClamp();
   UnLock();
   Odo = task(DriveT);
   Arm = task(ArmT);
   Con = task(IntakeT);
-  Mbg = task(TiltT);
   autoSelector();
 }
 
@@ -74,22 +51,9 @@ void autonomous(void) {
 
   Odo.suspend();
   Arm.suspend();
-  Mbg.suspend();
   Con.suspend();
 }
 
-/*---------------------------------------------------------------------------*/
-/*                                                                           */
-/*                              User Control Task                            */
-/*                                                                           */
-/*  This task is used to control your robot during the user control phase of */
-/*  a VEX Competition.                                                       */
-/*                                                                           */
-/*  You must modify the code to add your own robot specific commands here.   */
-/*---------------------------------------------------------------------------*/
-
-
-//
 // Main will set up the competition functions and callbacks.
 //
 int main() {

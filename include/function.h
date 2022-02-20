@@ -19,7 +19,7 @@ double CurAcc(); // reports the inertial sensors curent acceleration in newtons
 //-----------------------------------------------------------------------------------------------
 //------------------------------Lift/Arm functions-----------------------------------------------
 //Motion
-void lift(int speed); //Function to set the lift motors to certain speed
+void armUp(int speed); //Function to set the lift motors to certain speed
 void lift_Stop(); //Function to Stop the lift and set to hold motors 
 int ArmT(); // Arm task
 void armPos(int Angle); // sets desired position for the arm and activates task
@@ -40,15 +40,9 @@ bool IntakeOff();// checks to see if thei ntake has stoped its movement
 //-----------------------------------------------------------------------------------------------
 //---------------------------------Mbg and friends Functions-------------------------------------
 //Back tilter Motion
-int TiltT(); //Tilter Task
-void resetTiltAng();
-void TiltUp(int spd); //Tilter function to start task and set the Tilter into the Up pos
-void TiltDwn(int spd); //Tilter Function to start task and set the tilter into the down pos
 void Lock(); //Sets the Pnumatic for the tilter to lock
 void UnLock(); // Sets the Pneumatic fro the tilter to unlock
 //Back Tilter Sensing
-bool TiltOff(); //Checks to see if the tilter is done
-int TiltAng(); //Reports the Tilters curent Ang
 //--------------------------------------------------------------------------------------------------
 //--------------------------------------Total ROB Controlling Functions--------------------------
 

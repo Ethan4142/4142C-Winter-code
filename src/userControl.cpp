@@ -1,9 +1,15 @@
 #include "vex.h"
 
 using namespace vex;
-
+extern vex::task Odo;
+extern vex::task Arm;
+extern vex::task Con;
 void driverControlled(void) {
   // Stop Tasks from running during the driver controlled period
+  Odo.stop();
+  Arm.stop();
+  Con.stop();
+  //Driver Controlling variables--
   int powr[23];
   int powr1[23];
   int yAxis;
@@ -19,8 +25,10 @@ void driverControlled(void) {
 
   while (1) { // Controller Controlls while loop
     // Drive control table
+    Brain.Screen.printAt(200,200, "CurHeading %f ", odometry.ang );
     yAxis = Controller1.Axis3.value();
     xAxis = Controller1.Axis1.value();
+    odometry.updatePos();
     powr[0] = -100;
     powr[1] = -90;
     powr[2] = -80;
@@ -69,7 +77,7 @@ void driverControlled(void) {
     powr1[21] = 90;
     powr1[22] = 100;
 
-    //Drive Calculations to Controls
+    // Drive Calculations to Controls
     index = yAxis / 12 + 11;
     index1 = xAxis / 12 + 11;
 
@@ -80,19 +88,44 @@ void driverControlled(void) {
 
     LeftDrive(leftSide);
 
-    //Intake Controller
-    if(Controller1.ButtonX.pressing() == 1 && !conv){
-     conveyor.spin(fwd,90,pct);
-     conv = true;
-     wait(100,msec);
+    // Intake Controller
+    if (Controller1.ButtonL1.pressing() == 1) {
+      if (!conv) {
+        conveyor.spin(fwd, 90, pct);
+        conv = true;
+        wait(200, msec);
+      }
+      else if(conv){
+        conveyor.stop(coast);
+        conv = false;
+        wait(200,msec);
+      }
+    } else if (Controller1.ButtonL2.pressing() == 1) {
+      if (!revConv) {
+        conveyor.spin(reverse, 900, pct);
+        revConv = true;
+        wait(200, msec);
+      }
+      else if(revConv){
+        conveyor.stop(coast);
+        revConv = false;
+        wait(200,msec);
+      }
     }
-    else if(Controller1.ButtonX.pressing() == 1 && conv){
-      conveyor.stop(coast);
-      conv = false;
-      wait(100,msec);
+    // Mbg Intakes Controller
+
+    //Arm Controller
+    if (Controller1.ButtonR1.pressing()){
+      lift.spin(fwd,90,pct);
     }
-    
-    //Mbg Intakes Controller
+    else if(Controller1.ButtonR2.pressing()){
+      lift.spin(fwd,-90,pct);
+    }
+    else{
+      lift.stop(hold);
+    }
+
   }
   wait(20, msec); // sleep to prevent wasted time ???
+                  //
 }
