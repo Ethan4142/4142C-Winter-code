@@ -24,6 +24,8 @@ extern digital_out mbgIntakeL;
 extern digital_out claw;
 extern digital_out lok;
 
+extern motor_group leftDrive;
+extern motor_group rightDrive;
 
 void driverControlled(void);
 /**

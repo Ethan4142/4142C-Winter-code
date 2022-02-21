@@ -22,11 +22,12 @@ void driverControlled(void) {
 
   bool conv = false;
   bool revConv = false;
-  bool mbgPos = true;
+  bool mbgPos = false;
   bool clawPos = false;
+  bool driveStop = false;
   while (1) { // Controller Controlls while loop
     // Drive control table
-    Brain.Screen.printAt(200,200, "CurHeading %f ", odometry.ang );
+    Brain.Screen.printAt(200,200, "CurHeading %f ", odometry.getX() );
     yAxis = Controller1.Axis3.value();
     xAxis = Controller1.Axis1.value();
     odometry.updatePos();
@@ -85,9 +86,9 @@ void driverControlled(void) {
     rightSide = (powr[index] - powr1[index1]);
     leftSide = (powr[index] + powr1[index1]);
 
-    RightDrive(rightSide);
+    rightDrive.spin(fwd,rightSide,pct);
 
-    LeftDrive(leftSide);
+    leftDrive.spin(fwd,leftSide,pct);
 
     // Intake Controller
     if (Controller1.ButtonL1.pressing() == 1) {
@@ -114,23 +115,27 @@ void driverControlled(void) {
       }
     }
     // Mbg Intakes Controller
-    if(Controller1.ButtonA.pressing()){
-      if(mbgPos){
+    if(Controller1.ButtonX.pressing()){
+      if(!mbgPos){
         mbg(true);
-        wait(200,msec);
+        mbgPos = true;
+        wait(200,msec);        
       }
-      else if(!mbgPos){
+      else if(mbgPos){
         mbg(false);
+        mbgPos = false;
         wait(200,msec);
       }
     }
-    else if(Controller1.ButtonX.pressing()){
+    else if(Controller1.ButtonA.pressing()){
       if(clawPos){
         clamp(false);
+        clawPos = false;
         wait(200,msec);
       }
       else if(!clawPos){
         clamp(true);
+        clawPos = true;
         wait(200,msec);
       }
     }
@@ -144,7 +149,18 @@ void driverControlled(void) {
     else{
       lift.stop(hold);
     }
-    
+    if(Controller1.ButtonB.pressing()){
+     if(!driveStop){
+       leftDrive.stop(hold);
+       rightDrive.stop(hold);
+       driveStop = true;
+     }
+     else {
+       leftDrive.stop(coast);
+       rightDrive.stop(coast);
+       driveStop = false;
+     }
+    }
   }
   wait(20, msec); // sleep to prevent wasted time ???
                   //

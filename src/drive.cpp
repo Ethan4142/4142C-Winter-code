@@ -2,9 +2,9 @@
 #include "vex.h"
 
 using namespace vex;
-motor_group lftMotors = {lftFrnt, lftBack,lftTop};
+motor_group leftDrive = {lftFrnt, lftBack,lftTop};
 
-motor_group rgtMotors = {rgtFrnt, rgtBack,rgtTop};
+motor_group rightDrive = {rgtFrnt, rgtBack,rgtTop};
 // Constants ------------------------------------------------------------
 
 // PID Driving Constants
@@ -36,11 +36,9 @@ double TintegralError = 0;
 double TcurError = 0;
 
 // basic Motor functions--------------------------------------------------------
-void LeftDrive(int Speed) { lftMotors.spin(fwd, Speed, pct); }
-void RightDrive(int Speed) { rgtMotors.spin(fwd, Speed, pct); }
 void stop_Drive() { // Stops motor movement
-  lftMotors.stop(coast);
-  rgtMotors.stop(coast);
+  leftDrive.stop(coast);
+  rightDrive.stop(coast);
 }
 // Sensor funtions-------------------------------------------------------
 void EndTPID() {
@@ -167,14 +165,14 @@ int DriveT() {
 
   while(1){
     if(DriveStat == 1){
-     LeftDrive( DrivePID(mspd,dist) - Align());
-     RightDrive( DrivePID(mspd,dist) + Align());
+     leftDrive.spin(fwd,DrivePID(mspd,dist) - Align(),pct);
+     rightDrive.spin(fwd, DrivePID(mspd,dist) + Align(),pct);
      printf("Error %f", curError );
      TurnStat = 0;
     }
     if(TurnStat == 1){
-      LeftDrive(TurnPID(mspd,Degree));
-      RightDrive(-TurnPID(mspd,Degree));
+      leftDrive.spin(fwd,TurnPID(mspd,Degree),pct);
+      rightDrive.spin(fwd,-TurnPID(mspd,Degree),pct);
       printf("Error %f", TcurError);
       DriveStat = 0;
     }

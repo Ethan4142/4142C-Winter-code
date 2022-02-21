@@ -22,10 +22,11 @@ encoder Left = encoder(Expander21.C);
 motor lftTop = motor(PORT18, ratio18_1, true);
 motor rgtTop = motor(PORT12, ratio18_1, false);
 potV2 armPot = potV2(Expander21.H);
-digital_out mbgIntakeR = digital_out(Brain.ThreeWirePort.H);
+digital_out mbgIntakeR = digital_out(Brain.ThreeWirePort.F);
 digital_out mbgIntakeL = digital_out(Brain.ThreeWirePort.G);
-digital_out claw = digital_out(Brain.ThreeWirePort.F);
+digital_out claw = digital_out(Brain.ThreeWirePort.H);
 digital_out lok = digital_out(Brain.ThreeWirePort.E);
+vex::distance disSen = vex::distance(PORT5);
 // VEXcode generated functions
 // define variable for remote controller enable/disable
 bool RemoteControlCodeEnabled = true;

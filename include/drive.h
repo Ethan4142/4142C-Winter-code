@@ -2,8 +2,6 @@ using namespace vex;
 //------------------------------------------------------------------------------------------------
 //----------------------------------Drive functions-----------------------------------------------
 //Motion
-void LeftDrive(int Speed); //set drive motors to certain power
-void RightDrive(int Speed); //set drive motors to certain power
 void stop_Drive(); //function stops motors
 void reset_Drive(); // function to reset drive encoders
 int DriveT(); // Drive Task 

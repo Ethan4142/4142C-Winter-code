@@ -2,15 +2,19 @@ using namespace vex;
 using namespace std;
 
 class posTracking {
-private:
+ private:
   const double dP = 0;
   const double dI = 0;
   const double dD = 0;
 
+  const double tP = 0;
+  const double tI = 0;
+  const double tD = 0;
+
   const int width = 0;
   const int length = 0;
 
-public: 
+ public: 
   float sX;
   float sY;
   float sAng;
@@ -27,5 +31,5 @@ public:
 
   float getAng(bool radian); // returns last updates angle in radians!!!
 
-  float PID(float target);
+  float PID(float target,bool turning,bool axis);
 };
