@@ -13,7 +13,6 @@ void armUp(int speed) { lift.spin(fwd, speed, pct); }
 void lift_Stop() { lift.stop(hold); }
 // Returns position of arm
 double LiftPos() {
-  // return ((lftLift.position(degrees) + rgtLift.position(degrees)) / 2);
   return(armPot.angle(degrees));
 }
 // Sets arm position to specific degree

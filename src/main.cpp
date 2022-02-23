@@ -3,13 +3,13 @@
 using namespace vex;
 competition Competition;
 
+
 //init Tasks-----------
 vex::task Odo;
 vex::task Arm;
-vex::task Con;
+
 //----------------------
-// define your global instances of motors and other devices here
-posTracking odometry;
+// defining classes and initializing them
 /*---------------------------------------------------------------------------*/
 /*                          Pre-Autonomous Functions                         */
 /*                                                                           */
@@ -23,40 +23,16 @@ posTracking odometry;
 void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
   vexcodeInit();
-  reset_Drive();
   Inertial.calibrate();
-  Odo = task(DriveT);
+  Odo = task(driveT);
   Arm = task(ArmT);
-  Con = task(IntakeT);
   autoSelector();
 }
-
-/*---------------------------------------------------------------------------*/
-/*                                                                           */
-/*                              Autonomous Task                              */
-/*                                                                           */
-/*  This task is used to control your robot during the autonomous phase of   */
-/*  a VEX Competition.                                                       */
-/*                                                                           */
-/*  You must modify the code to add your own robot specific commands here.   */
-/*---------------------------------------------------------------------------*/
-
-void autonomous(void) {
-
-  //  wait(5,sec);
-  Inertial.setHeading(0, degrees);
-  Auto();
-
-  Odo.suspend();
-  Arm.suspend();
-  Con.suspend();
-}
-
 // Main will set up the competition functions and callbacks.
 //
 int main() {
   // Set up callbacks for autonomous and driver control periods.
-  Competition.autonomous(autonomous);
+  Competition.autonomous(Auto);
   Competition.drivercontrol(driverControlled);
 
   // Run the pre-autonomous function.

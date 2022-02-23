@@ -19,6 +19,8 @@ extern encoder Midd;
 extern motor lftTop;
 extern motor rgtTop;
 extern potV2 armPot;
+extern vex::distance mbgSen;
+extern vex::distance clawSen;
 extern digital_out mbgIntakeR;
 extern digital_out mbgIntakeL;
 extern digital_out claw;

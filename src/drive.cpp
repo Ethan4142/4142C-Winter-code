@@ -2,186 +2,175 @@
 #include "vex.h"
 
 using namespace vex;
-motor_group leftDrive = {lftFrnt, lftBack,lftTop};
+using namespace std;
 
-motor_group rightDrive = {rgtFrnt, rgtBack,rgtTop};
 // Constants ------------------------------------------------------------
 
 // PID Driving Constants
-double kp = 0.4;
-double ki = 0.002;
-double integralMaxDrive = 2233;
-double integralMinDrive = -2233;
-double kd = 0.25;
+double kp = 0.11;
+double ki = 0.02;
+double integralMaxDrive = 1000;
+double integralMinDrive = -1000;
+double kd = 0.03;
 double DprevError = 0;
 double DintegralError = 0;
-double curError = 0 ;
+double curError = 0;
 // DriveTask Constant
-double dist = 0;
+double Target = 0;
 double mspd = 0;
-double Degree = 0;
-int DriveStat = 0;
-int TurnStat = 0;
+double ang = 0;
+bool DriveStat ;
+bool TurnStat ;
 // straightinin constant
 double oKp = 1.4;
 // PID Turning Constants
 double TurnRor = 0;
-double turnKp = 0.90;
-double turnKi = 0.01;
+double tP = 0.76;
+double tI = 0.02;
 double integralMaxTurn = 500;
 double integralMinTurn = 5;
-double turnKd = 0.28;
+double tD = 0.27;
 double TprevError = 0;
 double TintegralError = 0;
 double TcurError = 0;
 
-// basic Motor functions--------------------------------------------------------
-void stop_Drive() { // Stops motor movement
-  leftDrive.stop(coast);
-  rightDrive.stop(coast);
+void Drive(){
+  leftDrive.spin(fwd,PID(1,90,false),pct);
+  rightDrive.spin(fwd,PID(1,90,false),pct);
 }
-// Sensor funtions-------------------------------------------------------
-void EndTPID() {
-  TintegralError = 0;
-  TprevError = 0;
-  TurnRor = Degree + TurnRor;
-  Degree = 0;
+double getAvg() { return ((Right + Left) / 2); }
+double getRotation() { return(Inertial.rotation(degrees)); } //gets heading of inertial sensor in degrees moving to the left is negetive
+double getHead(){ return(Inertial.heading()) ;} // degrees of robot 0 - 360
+void resetDrive() {
+  Right.resetRotation();
+  Left.resetRotation();
 }
-void ResetDPID() {
-  DintegralError = 0;
-  DprevError = 0;
-  dist = 0;
-  curError = 0;
-  reset_Drive();
-}
-void reset_Drive() {
-  Left.setPosition(0, degrees); // resets integrated encoder positions
-  Right.setPosition(0, degrees);
-}
-int getAvg() {
-  return ((Right.position(degrees) + Left.position(degrees)) / 2);
-}
-double curHeading() { return Inertial.rotation(degrees); }
-double CurAcc() { return Inertial.acceleration(yaxis); }
-
 bool DriveOff(){
-  if ((DriveStat == 0) && (TurnStat == 0)){ //
-    return(true);
-  }
-  else{
+  if(DriveStat || TurnStat){
     return(false);
   }
+  else if(!DriveStat && !TurnStat){
+    return(true);
+  }
+  return(0);
 }
-// PID
-// controllers----------------------------------------------------------------------
-// Driving PID
-double DrivePID(int mSpeed, int Inches) {
-  int ticks = (Inches / 12.9525) * 230; // chages inches into encoder ticks
-
-  curError = ticks - getAvg(); // calculates the current error
-
-  double outputP = kp * curError; // calculates the proportional output
-
-  DintegralError += curError;               // calculates integral error
-  if (DintegralError >= integralMaxDrive) { // limits integral numbers
-    DintegralError = integralMaxDrive;
-  } else if (DintegralError <= integralMinDrive) {
-    DintegralError = integralMinDrive;
-  }
-  double outputI = ki * DintegralError; // calculates integral output
-
-  double outputD = kd * (curError - DprevError); // calculates Derivitive output
-
-  DprevError = curError; // sets the current error to previous error
-
-  double Output = outputP + outputI + outputD; // calculates Total PID Output
-  if (Output >= mSpeed) {
-    Output = mSpeed;
-  } else if (Output <= -mSpeed) {
-    Output = -mSpeed;
-  }
-
- if (fabs(curError) <= 10){
-   DriveStat = 0;
- }
-  return (Output);
+float align(){ return(oKp * ((getRotation() - TurnRor)- 0)); }
+void resetPID(){
+  resetDrive();
+  Target= 0;
+   mspd =0;
+   ang = 0;
+   TprevError = 0;
+   TintegralError =0;
+   DintegralError = 0;
+   DprevError = 0;
 }
-// Driving straightening
+double PID(double target, int mspeed, bool turning) {
+  double pOut;
+  double iOut;
+  double dOut;
+  double output;
+  if (!turning) {
+    double ticks = target * 820 ;
+    curError = ticks - getAvg();
 
-double Align() { return (oKp * (curHeading() - TurnRor)); }
+    pOut = kp * curError;
 
-// Turning PID
-double TurnPID(int mSpeed, int Angle) {
-  TcurError = Angle - ((curHeading()) - TurnRor); // current heading error
+    DintegralError += curError;
 
-  double ToutputP = turnKp * TcurError; // calculates Turning P output
-
-  TintegralError += TcurError;
-  if (TintegralError > integralMaxTurn) { // limits Integral
-    TintegralError = integralMaxTurn;
-  } else if (TintegralError < integralMinTurn) {
-    TintegralError = integralMinTurn;
-  }
-
-  double ToutputI = turnKi * TintegralError; // calculates turning I output
-
-  double ToutputD = turnKd * (TcurError - TprevError); // calculates turning D output
-
-  TprevError = TcurError; // sets Previous output at end
-
-  double Toutput =
-      ToutputP + ToutputI + ToutputD; // calculates Total PID turning output
-
-  if (Toutput > mSpeed) { // speed limiter
-    Toutput = mSpeed;
-  } else if (Toutput < -mSpeed) {
-    Toutput = -mSpeed;
-  }
-
-  if(fabs(TcurError) <= 2){ //sets the Task to done mode 
-    TurnStat = 0;
-  }
-
-  return (Toutput);
-}
-
-// Drive Function to activate task or smth-------------------------------
-void setPos(int Distance, int speed,int Ang) {
-  if(abs(Distance) > 0){ //if the Drive pos wanna be changed 
-    DriveStat = 1;  //makes the Drive Task activate
-    dist = Distance;
-    mspd =speed;
-  }
-  else if(abs(Ang) > 0){ //if the angle wants to be changed
-    TurnStat  = 1; //Makes the Turn Taks activate
-    mspd = speed;
-    Degree = Ang;
-  }
-}
-
-// Task-------------------------------------------------------------------
-
-int DriveT() {
-
-  while(1){
-    if(DriveStat == 1){
-     leftDrive.spin(fwd,DrivePID(mspd,dist) - Align(),pct);
-     rightDrive.spin(fwd, DrivePID(mspd,dist) + Align(),pct);
-     printf("Error %f", curError );
-     TurnStat = 0;
+    if (DintegralError >= integralMaxDrive) {
+      DintegralError = integralMaxDrive;
+    } else if (DintegralError <= integralMinDrive) {
+      DintegralError = integralMinDrive;
     }
-    if(TurnStat == 1){
-      leftDrive.spin(fwd,TurnPID(mspd,Degree),pct);
-      rightDrive.spin(fwd,-TurnPID(mspd,Degree),pct);
-      printf("Error %f", TcurError);
-      DriveStat = 0;
+    iOut = ki * DintegralError;
+
+    dOut = kd * DprevError;
+
+    DprevError = curError;
+
+    output = pOut + iOut + dOut;
+
+    if (output > mspeed) {
+      output = mspeed;
+    } else if (output <= -mspeed) {
+      output = -mspeed;
     }
-    if (DriveStat == 0 && TurnStat == 0 ){
-      EndTPID();
-      ResetDPID();
-     stop_Drive();
+    return (output);
+  }
+  else if(turning){
+    TcurError = target - (getRotation() - TurnRor);
+    
+    pOut = tP * TcurError;
+
+    TintegralError += target;
+
+    if(TintegralError >= integralMaxTurn){
+      TintegralError = integralMaxTurn;
     }
-  } 
+    else if(TintegralError <= integralMinTurn){
+      TintegralError = integralMinTurn;
+    }
+    
+    iOut = tI * TintegralError;
+
+    dOut = tD * TprevError;
+
+    TprevError = TcurError;
+
+    output = pOut + iOut +dOut;
+
+    if(output >= mspeed){
+      output = mspeed;
+    }
+    else if(output <= - mspeed){
+      output = -mspeed;
+    }
+    return(output);
+  }
+  return(0);
+}
+
+void goTo(double target, int mspeed, bool turning){
+  mspd = mspeed;
+  if(turning){
+    TurnStat = true;
+    DriveStat = false;
+    ang = target;
+    
+  }
+  else if(!turning){
+    DriveStat = true;
+    TurnStat = false;
+    Target = target;
+  }
+
+}
+int driveT() {
+  while (1) {
+    printf("curErroe turn %f",getAvg());
+    if(DriveStat){
+      leftDrive.spin(fwd,PID(Target,mspd,false) - align(),pct);
+      rightDrive.spin(fwd,PID(Target,mspd,false) +align(),pct);
+      if(abs(PID(Target,mspd,false)) <= 10){
+        resetPID();
+        DriveStat = false;
+      }
+    }
+    else if(TurnStat){
+      leftDrive.spin(fwd,PID(ang,mspd,true),pct);
+      rightDrive.spin(fwd,-PID(ang,mspd,true),pct);
+      if(abs(TcurError) <= 1){
+        TurnRor = ang;
+        resetPID();
+        TurnStat = false; 
+      }
+    }
+    else if(!DriveStat && !TurnStat){
+      leftDrive.stop(coast);
+      rightDrive.stop(coast);
+    }
+  }
   wait(20, msec);
   return (0);
 }

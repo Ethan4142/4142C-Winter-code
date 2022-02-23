@@ -17,10 +17,12 @@
 
 #include "robot-config.h"
 #include "drive.h"
-#include "posTracking.h"
 #include "auto.h"
 #include "mbg.h"
-extern posTracking odometry;
+#include "arm.h"
+#include "intake.h"
+
+extern competition Competition;
 
 #define waitUntil(condition)                                                   \
   do {                                                                         \

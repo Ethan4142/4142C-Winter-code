@@ -3,12 +3,11 @@
 using namespace vex;
 extern vex::task Odo;
 extern vex::task Arm;
-extern vex::task Con;
+
 void driverControlled(void) {
   // Stop Tasks from running during the driver controlled period
   Odo.stop();
   Arm.stop();
-  Con.stop();
   //Driver Controlling variables--
   int powr[23];
   int powr1[23];
@@ -27,10 +26,10 @@ void driverControlled(void) {
   bool driveStop = false;
   while (1) { // Controller Controlls while loop
     // Drive control table
-    Brain.Screen.printAt(200,200, "CurHeading %f ", odometry.getX() );
+    Brain.Screen.printAt(200,200, "CurHeading %f ", LiftPos());
     yAxis = Controller1.Axis3.value();
     xAxis = Controller1.Axis1.value();
-    odometry.updatePos();
+
     powr[0] = -100;
     powr[1] = -90;
     powr[2] = -80;
@@ -93,7 +92,7 @@ void driverControlled(void) {
     // Intake Controller
     if (Controller1.ButtonL1.pressing() == 1) {
       if (!conv) {
-        conveyor.spin(fwd, 90, pct);
+        conveyor.spin(fwd, 100, pct);
         conv = true;
         wait(200, msec);
       }
@@ -104,7 +103,7 @@ void driverControlled(void) {
       }
     } else if (Controller1.ButtonL2.pressing() == 1) {
       if (!revConv) {
-        conveyor.spin(reverse, 900, pct);
+        conveyor.spin(reverse, 90, pct);
         revConv = true;
         wait(200, msec);
       }
@@ -149,13 +148,14 @@ void driverControlled(void) {
     else{
       lift.stop(hold);
     }
+    //break button to stop the robot shifting on the platform
     if(Controller1.ButtonB.pressing()){
      if(!driveStop){
        leftDrive.stop(hold);
        rightDrive.stop(hold);
        driveStop = true;
      }
-     else {
+     else if(driveStop){
        leftDrive.stop(coast);
        rightDrive.stop(coast);
        driveStop = false;
