@@ -26,7 +26,7 @@ void driverControlled(void) {
   bool driveStop = false;
   while (1) { // Controller Controlls while loop
     // Drive control table
-    Brain.Screen.printAt(200,200, "CurHeading %f ", LiftPos());
+    Brain.Screen.printAt(200,200, "CurHeading %f ", mbgSen.objectDistance(mm));
     yAxis = Controller1.Axis3.value();
     xAxis = Controller1.Axis1.value();
 

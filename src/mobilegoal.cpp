@@ -9,18 +9,20 @@ void clawMbg(){
   }
   }
 }
-void liftMbg(){
+void lokMbg(){
   while(1){
-    if(mbgBack() <20){
-      mbg(true);
+    if(mbgSen.objectDistance(mm) <= 30){
+      lok.set(false);
       break;
     }
   }
 }
 void mbg(bool take){
+  lok.set(take);
+  wait(100,msec);
   mbgIntakeR.set(take);
   mbgIntakeL.set(take);
-  lok.set(take);
+  
 }
 
 void clamp (bool pos){

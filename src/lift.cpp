@@ -4,7 +4,7 @@
 using namespace vex;
 
 
-int ArmStat = 0;
+bool ArmStat ;
 double height = 0;
 // Function to put the lift up
 void armUp(int speed) { lift.spin(fwd, speed, pct); }
@@ -17,7 +17,7 @@ double LiftPos() {
 }
 // Sets arm position to specific degree
 bool ArmOff(){
-  if (ArmStat == 0){
+  if (!ArmStat ){
     return(true);
   }
   else{
@@ -27,25 +27,26 @@ bool ArmOff(){
 
 void armPos(int Angle){
   height = Angle;
-  ArmStat = 1;
+  ArmStat = true;
 }
 //Arm task 
 int ArmT(){
   while(1){
     double ArmError = (height - LiftPos());
-    if (ArmStat == 1){
+    if (ArmStat){
       printf("Arm height %f" , ArmError);
-      if(ArmError > 9){
+      if(ArmError > 2){
         lift.spin(fwd,90,pct);
       }
-      else if(ArmError < -9){
-        armUp(-90);
+      else if(ArmError < -2){
+        lift.spin(fwd,-90,pct);
       }
-      else if (fabs(ArmError) <= 8){
-        ArmStat = 0;
+      else if (fabs(ArmError) <= 1){
+        ArmStat = false;
       }
     }
-    else if(ArmStat == 0){
+    else if(!ArmStat){
+      height = 0;
       lift_Stop();
     }
   }

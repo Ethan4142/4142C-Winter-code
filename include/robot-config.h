@@ -15,7 +15,6 @@ extern encoder Right;
 extern encoder Left;
 extern triport Expander21;
 extern motor Tilter;
-extern encoder Midd;
 extern motor lftTop;
 extern motor rgtTop;
 extern potV2 armPot;

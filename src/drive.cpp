@@ -7,7 +7,7 @@ using namespace std;
 // Constants ------------------------------------------------------------
 
 // PID Driving Constants
-double kp = 0.11;
+double kp = 0.1;
 double ki = 0.02;
 double integralMaxDrive = 1000;
 double integralMinDrive = -1000;
@@ -21,23 +21,20 @@ double mspd = 0;
 double ang = 0;
 bool DriveStat ;
 bool TurnStat ;
+bool mbging;
 // straightinin constant
-double oKp = 1.4;
+double oKp = 0.7;
 // PID Turning Constants
 double TurnRor = 0;
-double tP = 0.76;
-double tI = 0.02;
-double integralMaxTurn = 500;
+double tP = 0.37;
+double tI = 0.01;
+double integralMaxTurn = 700;
 double integralMinTurn = 5;
-double tD = 0.27;
+double tD = 0.15;
 double TprevError = 0;
 double TintegralError = 0;
 double TcurError = 0;
 
-void Drive(){
-  leftDrive.spin(fwd,PID(1,90,false),pct);
-  rightDrive.spin(fwd,PID(1,90,false),pct);
-}
 double getAvg() { return ((Right + Left) / 2); }
 double getRotation() { return(Inertial.rotation(degrees)); } //gets heading of inertial sensor in degrees moving to the left is negetive
 double getHead(){ return(Inertial.heading()) ;} // degrees of robot 0 - 360
@@ -99,11 +96,11 @@ double PID(double target, int mspeed, bool turning) {
     return (output);
   }
   else if(turning){
-    TcurError = target - (getRotation() - TurnRor);
+    TcurError = target - (getRotation() );
     
     pOut = tP * TcurError;
 
-    TintegralError += target;
+    TintegralError += TcurError;
 
     if(TintegralError >= integralMaxTurn){
       TintegralError = integralMaxTurn;
@@ -137,7 +134,6 @@ void goTo(double target, int mspeed, bool turning){
     TurnStat = true;
     DriveStat = false;
     ang = target;
-    
   }
   else if(!turning){
     DriveStat = true;
@@ -146,13 +142,20 @@ void goTo(double target, int mspeed, bool turning){
   }
 
 }
+//-----------------------------------------------------------------------------------------
+void goTombg(){
+  mspd = 100;
+  DriveStat = true;
+  mbging = true;
+  Target = 100;
+}
 int driveT() {
   while (1) {
-    printf("curErroe turn %f",getAvg());
+    printf("curErroe turn %f",TcurError );
     if(DriveStat){
       leftDrive.spin(fwd,PID(Target,mspd,false) - align(),pct);
       rightDrive.spin(fwd,PID(Target,mspd,false) +align(),pct);
-      if(abs(PID(Target,mspd,false)) <= 10){
+      if(abs(curError) <= 10){
         resetPID();
         DriveStat = false;
       }
@@ -160,10 +163,17 @@ int driveT() {
     else if(TurnStat){
       leftDrive.spin(fwd,PID(ang,mspd,true),pct);
       rightDrive.spin(fwd,-PID(ang,mspd,true),pct);
-      if(abs(TcurError) <= 1){
+      if(abs(TcurError) <= 5){
         TurnRor = ang;
         resetPID();
         TurnStat = false; 
+      }
+    }
+    else if(mbging){
+      if(clawSen.objectDistance(mm) <= 30){
+        DriveStat = false;
+        resetPID();
+        clamp(true);
       }
     }
     else if(!DriveStat && !TurnStat){
@@ -171,6 +181,6 @@ int driveT() {
       rightDrive.stop(coast);
     }
   }
-  wait(20, msec);
+  wait(10, msec);
   return (0);
 }

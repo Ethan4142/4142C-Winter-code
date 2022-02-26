@@ -11,3 +11,6 @@ int mbgBack(); //returns the distacne of an object in front of the back distance
 
 void clawMbg(); //uses the Frnt distance sensor to detect when the mbg is in frnt of the robot and grabs it.
 
+void goTombg();
+
+void lokMbg();
